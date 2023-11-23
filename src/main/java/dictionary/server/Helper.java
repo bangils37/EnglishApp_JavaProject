@@ -13,10 +13,10 @@ import org.jsoup.nodes.TextNode;
 public class Helper {
 
     /**
-     * Tạo một chuỗi khoảng trắng có độ dài 'spaces'.
+     * Creates a string of spaces that is 'spaces' spaces long.
      *
-     * @param numSpaces Số lượng khoảng trắng để thêm vào chuỗi.
-     * @return chuỗi của `numSpaces` khoảng trắng
+     * @param numSpaces The number of spaces to add to the string.
+     * @return the string of `numSpaces` spaces
      */
     public static String createSpacesString(int numSpaces) {
         if (numSpaces < 0) {
@@ -26,10 +26,10 @@ public class Helper {
     }
 
     /**
-     * Tạo một chuỗi gồm các ký tự `-` có độ dài 'length'.
+     * Creates a string of `-`` that is 'length' characters long.
      *
-     * @param length Số lượng ký tự `-` để thêm vào dòng phân cách dọc.
-     * @return chuỗi của `length` ký tự `-`
+     * @param length The number of `-` characters to add to the vertical separator line.
+     * @return the string of `length` characters `-`
      */
     public static String createLineSeparator(int length) {
         if (length < 0) {
@@ -39,13 +39,13 @@ public class Helper {
     }
 
     /**
-     * Chuyển đổi HTML thành văn bản thuần túy giữ nguyên các dòng mới, đoạn văn...
+     * Convert HTML to plain text keeping line breaks, paragraph...
      *
-     * <p>Tham khảo:
+     * <p>Reference:
      * https://stackoverflow.com/questions/2513707/how-to-convert-html-to-text-keeping-linebreaks
      *
-     * @param html Chuỗi HTML
-     * @return văn bản thuần túy
+     * @param html HTML String
+     * @return the plain text
      */
     public static String htmlToText(String html) {
         Document document = Jsoup.parse(html);
@@ -55,12 +55,12 @@ public class Helper {
     }
 
     /**
-     * Xây dựng văn bản thuần túy từ các nút Jsoup.
+     * Build the plain text from Jsoup nodes.
      *
-     * <p>Tham khảo: <a
+     * <p>Reference: <a
      * href="https://stackoverflow.com/questions/2513707/how-to-convert-html-to-text-keeping-linebreaks">...</a>
      *
-     * @param node Các nút Jsoup
+     * @param node Jsoup nodes
      * @return StringBuffer
      */
     private static StringBuffer buildStringFromNode(Node node) {
@@ -85,10 +85,10 @@ public class Helper {
     }
 
     /**
-     * Đếm số dòng trong tệp `file`.
-     * @param file đường dẫn của tệp
-     * @return số dòng của tệp đã cho
-     * @throws IOException tệp không tìm thấy hoặc không thể đọc
+     * Count number of lines in the file `file`.
+     * @param file the path of the file
+     * @return number of lines of the given file
+     * @throws IOException file not found or couldn't read
      */
     public static int countNumLinesOfFile(String file) throws IOException {
         BufferedReader reader = new BufferedReader(new FileReader(file));

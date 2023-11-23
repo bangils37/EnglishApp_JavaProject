@@ -11,10 +11,10 @@ import java.nio.charset.StandardCharsets;
 public class TranslatorApi {
 
     /**
-     * Dịch văn bản tiếng Anh `text` sang tiếng Việt.
+     * Translate English text `text` into Vietnamese.
      *
-     * @param text văn bản cần dịch
-     * @return bản dịch tiếng Việt, hoặc "500" nếu có lỗi
+     * @param text the text to be translated
+     * @return the Vietnamese translation, or "500" if got errors
      */
     public static String translateEnToVi(String text) {
         try {
@@ -26,10 +26,10 @@ public class TranslatorApi {
     }
 
     /**
-     * Dịch văn bản tiếng Việt `text` sang tiếng Anh.
+     * Translate Vietnamese text `text` into English.
      *
-     * @param text văn bản cần dịch
-     * @return bản dịch tiếng Anh, hoặc "500" nếu có lỗi
+     * @param text the text to be translated
+     * @return the English translation, or "500" if got errors
      */
     public static String translateViToEn(String text) {
         try {
@@ -41,15 +41,15 @@ public class TranslatorApi {
     }
 
     /**
-     * Dịch văn bản từ `langFrom` sang `langTo`.
+     * Translate text from `langFrom` to `langTo`.
      *
      * <p><a
-     * href="https://stackoverflow.com/questions/8147284/how-to-use-google-translate-api-in-my-java-application">Tham chiếu</a>
+     * href="https://stackoverflow.com/questions/8147284/how-to-use-google-translate-api-in-my-java-application">Reference</a>
      *
-     * @param langFrom ngôn ngữ đầu vào (2 ký tự (ví dụ: 'en'))
-     * @param langTo ngôn ngữ đầu ra (2 ký tự (ví dụ: 'vi'))
-     * @param text văn bản cần dịch
-     * @return văn bản dịch trong `langTo`
+     * @param langFrom the input language (2 letters (ex: 'en'))
+     * @param langTo the output language (2 letters (ex: 'vi'))
+     * @param text the text to be translated
+     * @return the translation text in `langTo`
      */
     private static String translate(String langFrom, String langTo, String text)
             throws IOException {

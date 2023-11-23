@@ -7,6 +7,8 @@ import dictionary.server.LocalDictionary;
 import java.sql.SQLException;
 import java.util.Objects;
 import java.util.Optional;
+
+import javafx.application.Application;
 import javafx.application.Platform;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
@@ -16,7 +18,7 @@ import javafx.scene.control.Alert.AlertType;
 import javafx.scene.control.ButtonType;
 import javafx.stage.Stage;
 
-public class App extends javafx.application.Application {
+public class App extends Application {
     public static Dictionary dictionary;
 
     /**
@@ -35,15 +37,14 @@ public class App extends javafx.application.Application {
         primaryStage.setTitle("Dictionary");
         primaryStage.setResizable(false);
         try {
-            FXMLLoader loader =
-                    new FXMLLoader(
-                            getClass().getClassLoader().getResource("fxml/Application.fxml"));
+            FXMLLoader loader = new FXMLLoader(
+                    getClass().getClassLoader().getResource("fxml/Application.fxml"));
             Parent root = loader.load();
             Scene scene = new Scene(root);
             scene.getStylesheets()
                     .add(
                             Objects.requireNonNull(
-                                            getClass().getResource("/css/Application-light.css"))
+                                    getClass().getResource("/css/Application-light.css"))
                                     .toExternalForm());
             primaryStage.setScene(scene);
             primaryStage.setOnCloseRequest(
@@ -61,8 +62,9 @@ public class App extends javafx.application.Application {
     }
 
     /**
-     * Mở (popup) một hộp thoại xác nhận để chọn liệu có sử dụng cơ sở dữ liệu MYSQL với từ điển hay không.
-     * Sau đó khởi tạo loại từ điển.
+     * Open (popup) a confirmation box to choose whether to use MYSQL database with
+     * the dictionary
+     * or not. Then initialize the dictionary type.
      */
     private void selectDictionaryType() {
         Alert alert = new Alert(AlertType.CONFIRMATION);

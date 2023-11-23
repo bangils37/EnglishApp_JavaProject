@@ -12,67 +12,69 @@ import java.util.ArrayList;
 public abstract class Dictionary {
 
     /**
-     * Khởi tạo từ điển khi khởi động ứng dụng. (Chỉ được ghi đè bởi DatabaseDictionary để thực hiện kết nối MYSQL)
+     * Initialize the dictionary when starting the application. (Only overridden by
+     * DatabaseDictionary for making MYSQL connection)
      */
     public void initialize() throws SQLException {}
 
     /**
-     * Đóng từ điển khi thoát khỏi ứng dụng. (Chỉ được ghi đè bởi DatabaseDictionary để đóng kết nối MYSQL)
+     * Close the dictionary when exiting the application. (Only overridden by DatabaseDictionary for
+     * close the MYSQL connection)
      */
     public void close() {}
 
     /**
-     * Lấy tất cả các từ trong từ điển.
+     * Get all words in the dictionary.
      *
-     * @return ArrayList của Word
+     * @return ArrayList of Word
      */
     public abstract ArrayList<Word> getAllWords();
 
     /**
-     * Lấy tất cả các từ tiếng Anh trong từ điển thành một ArrayList của String.
+     * Get all English words in the dictionary into an ArrayList of String.
      *
-     * @return ArrayList của String chứa tất cả các từ
+     * @return ArrayList of String of all words
      */
     public abstract ArrayList<String> getAllWordTargets();
 
     /**
-     * Tra cứu từ `target` và trả về định nghĩa tương ứng.
+     * Lookup the word `target` and return the corresponding definition.
      *
-     * @param target từ cần tra cứu
-     * @return định nghĩa, nếu không tìm thấy trả về "404" dưới dạng String.
+     * @param target the lookup word
+     * @return the definition, if not found "404" is returned as a String.
      */
     public abstract String lookUpWord(final String target);
 
     /**
-     * Chèn một từ mới vào từ điển.
+     * Insert a new word to dictionary.
      *
-     * @param target từ
-     * @param definition định nghĩa
-     * @return true nếu `target` chưa được thêm, ngược lại trả về false
+     * @param target the word
+     * @param definition the definition
+     * @return true if `target` hasn't been added yet, false otherwise
      */
     public abstract boolean insertWord(final String target, final String definition);
 
     /**
-     * Xóa từ `target`.
+     * Delete the word `target`.
      *
-     * @param target từ cần xóa
-     * @return true nếu xóa thành công, ngược lại trả về false
+     * @param target the deleted word
+     * @return true if successfully delete, false otherwise
      */
     public abstract boolean deleteWord(final String target);
 
     /**
-     * Cập nhật định nghĩa tiếng Việt của `target` thành `definition`.
+     * Update the Vietnamese definition of `target` to `definition`.
      *
-     * @param target từ
-     * @param definition định nghĩa mới
-     * @return true nếu cập nhật thành công, ngược lại trả về false
+     * @param target the word
+     * @param definition the new definition
+     * @return true if successfully updated, false otherwise
      */
     public abstract boolean updateWordDefinition(final String target, final String definition);
 
     /**
-     * Xuất tất cả các từ với mỗi từ và định nghĩa nằm trên 1 dòng, được ngăn cách bằng ký tự tab.
+     * Export all words with every word and definition is on 1 line separated by a tab character.
      *
-     * @return chuỗi các từ được xuất
+     * @return a string of exported words
      */
     public String exportAllWords() {
         ArrayList<Word> allWords = getAllWords();
@@ -87,10 +89,10 @@ public abstract class Dictionary {
     }
 
     /**
-     * Xuất tất cả các từ và định nghĩa của chúng vào tệp `exportPath`.
+     * Export all words and their definitions to the file `exportPath`.
      *
-     * @param exportPath đường dẫn của tệp xuất khẩu
-     * @throws IOException đường dẫn không tìm thấy
+     * @param exportPath the path of the exported file
+     * @throws IOException path not found
      */
     public void exportToFile(String exportPath) throws IOException {
         Writer out =

@@ -23,7 +23,7 @@ public class EditDefinition {
         EditDefinition.editingWord = editingWord;
     }
 
-    /** Thiết lập văn bản nhãn và đặt định nghĩa hiện tại của từ đang chỉnh sửa. */
+    /** Set label text and set the current definition of the editing word. */
     @FXML
     private void initialize() {
         editLabel.setText("Chỉnh sửa giải nghĩa của từ `" + editingWord + "`");
@@ -38,9 +38,9 @@ public class EditDefinition {
     }
 
     /**
-     * Lưu định nghĩa mới cho từ đang chỉnh sửa ở định dạng HTML.
+     * Save the new definition for the editing word in HTML format.
      *
-     * @param event sự kiện hành động
+     * @param event action event
      */
     @FXML
     public void saveDefinition(ActionEvent event) {
@@ -70,9 +70,9 @@ public class EditDefinition {
     }
 
     /**
-     * Thoát khỏi cửa sổ chỉnh sửa.
+     * Quit the editing window.
      *
-     * @param event sự kiện hành động
+     * @param event action event
      */
     @FXML
     public void quitWindow(ActionEvent event) {
@@ -81,9 +81,9 @@ public class EditDefinition {
     }
 
     /**
-     * Đặt CSS cho hộp thoại cảnh báo trong trường hợp chế độ tối.
+     * Set CSS for alert box in case of dark mode.
      *
-     * @param alert cảnh báo
+     * @param alert alert
      */
     private void setAlertCss(Alert alert) {
         if (!Application.isLightMode()) {

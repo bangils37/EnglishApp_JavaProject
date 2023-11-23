@@ -22,16 +22,16 @@ public class ExportToFile {
     @FXML private Label dirLabel;
     @FXML private TextField fileName;
 
-    /** Tập trung vào nút browseButton khi mở cửa sổ. */
+    /** Focus on the browseButton when open the window. */
     @FXML
     private void initialize() {
         Platform.runLater(() -> browseButton.requestFocus());
     }
 
     /**
-     * Chọn thư mục để lưu file đã xuất.
+     * Choose the directory to save the exported file to.
      *
-     * @param event sự kiện hành động
+     * @param event action event
      */
     @FXML
     public void chooseDir(ActionEvent event) {
@@ -41,8 +41,8 @@ public class ExportToFile {
     }
 
     /**
-     * Xuất tất cả các từ vào thư mục và tên file đã chọn. Mỗi dòng của file xuất ra là một từ với
-     * định nghĩa của nó, cách nhau bởi ký tự TAB.
+     * Export all the words into the selected directory and file name. Each line of the exported
+     * file is a word with its definition separated by a TAB character.
      */
     @FXML
     public void submitExport() {
@@ -69,9 +69,9 @@ public class ExportToFile {
     }
 
     /**
-     * Đặt CSS cho hộp thoại cảnh báo trong trường hợp chế độ tối.
+     * Set CSS for alert box in case of dark mode.
      *
-     * @param alert cảnh báo
+     * @param alert alert
      */
     private void setAlertCss(Alert alert) {
         if (!Application.isLightMode()) {

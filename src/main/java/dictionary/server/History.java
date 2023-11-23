@@ -1,20 +1,20 @@
 package dictionary.server;
 
 import java.io.BufferedReader;
-import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
-import java.io.OutputStreamWriter;
-import java.io.Writer;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 
+import dictionary.util.FileUtil;
+
 public class History {
     private static final int MAX_WORDS_HISTORY = 30;
+    private static final String HISTORY_DIRECTORY_PATH = "dictionary-user-data/";
+    private static final String HISTORY_FILE_PATH = HISTORY_DIRECTORY_PATH + "words-search-history.txt";
     private static final ArrayList<String> historySearch = new ArrayList<>();
 
     public static ArrayList<String> getHistorySearch() {
@@ -22,60 +22,48 @@ public class History {
     }
 
     /**
-     * Load file lịch sử mỗi khi ứng dụng mở.
-
-     * <p>Tệp tin nằm ở ./dictionary-user-data/words-search-history.txt với `./` là thư mục tương đối
-     * bạn chạy ứng dụng từ đó.
-
-     * <p>Nếu dictionary-user-data hoặc words-search-history.txt chưa tồn tại, tạo chúng.
-     * Ngược lại, load các từ hiện tại trong words-search-history.txt vào ArrayList.
+     * Load search history into `historySearch` ArrayList.
+     * 
+     * @see #historySearch
      */
     public static void loadHistory() {
-        File dir = new File("dictionary-user-data/");
-        if (!dir.exists()) {
-            if (!dir.mkdirs()) {
-                System.out.println("Không thể tạo thư mục `dictionary-user-data`!");
-            }
-        }
+        File directory = new File(HISTORY_DIRECTORY_PATH);
+        FileUtil.createDirectoryIfNotExists(directory);
 
-        File file = new File(dir + "/words-search-history.txt");
-        if (!file.exists()) {
-            try {
-                if (!file.createNewFile()) {
-                    System.out.println("Không thể tạo tệp `words-search-history.txt`!");
-                }
-            } catch (IOException e) {
-                e.printStackTrace();
-                System.out.println("Không thể tạo tệp `words-search-history.txt`!");
-            }
-            return;
-        }
+        File historyFile = new File(HISTORY_FILE_PATH);
+        FileUtil.createFileIfNotExists(historyFile);
 
-        try {
-            BufferedReader in =
-                    new BufferedReader(
-                            new InputStreamReader(
-                                    new FileInputStream(
-                                            "dictionary-user-data/words-search-history.txt"),
-                                    StandardCharsets.UTF_8));
-            String inputLine;
-            while ((inputLine = in.readLine()) != null) {
-                historySearch.add(inputLine.strip());
-            }
-        } catch (FileNotFoundException e) {
-            e.printStackTrace();
-            System.out.println("Không tìm thấy " + "words-search-history.txt");
-        } catch (IOException e) {
-            e.printStackTrace();
-            System.out.println("Không thể đọc " + "words-search-history.txt");
-        }
+        loadHistoryFromFile(HISTORY_FILE_PATH);
         refactorHistory();
     }
 
     /**
-     * Thêm từ vào lịch sử. Giữ tối đa `MAX_WORDS_HISTORY` từ gần đây nhất trong ArrayList.
-     *
-     * @param target từ cần thêm
+     * Load search history from saved file.
+     * 
+     * @param filePath path to the file
+     */
+    private static void loadHistoryFromFile(String filePath) {
+        try (BufferedReader reader = new BufferedReader(
+                new InputStreamReader(
+                        new FileInputStream(filePath),
+                        StandardCharsets.UTF_8))) {
+            String line;
+            while ((line = reader.readLine()) != null) {
+                historySearch.add(line.strip());
+            }
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+            System.out.println("File not found: " + filePath);
+        } catch (IOException e) {
+            e.printStackTrace();
+            System.out.println("Failed to read file: " + filePath);
+        }
+    }
+
+    /**
+     * Add a word to the search history.
+     * 
+     * @param target the word to be added
      */
     public static void addWordToHistory(String target) {
         historySearch.removeIf(e -> e.equals(target));
@@ -83,38 +71,25 @@ public class History {
         refactorHistory();
     }
 
-    /** Ghi các từ trong ArrayList vào `dictionary-user-data/words-search-history.txt`. */
+    /**
+     * Export serach history to saved file.
+     */
     public static void exportHistory() {
-        try {
-            Writer out =
-                    new BufferedWriter(
-                            new OutputStreamWriter(
-                                    new FileOutputStream(
-                                            "dictionary-user-data/words-search-history.txt"),
-                                    StandardCharsets.UTF_8));
-            StringBuilder content = new StringBuilder();
-            for (String target : historySearch) {
-                content.append(target).append("\n");
-            }
-            out.write(content.toString());
-            out.close();
+        StringBuilder content = new StringBuilder();
 
-        } catch (IOException e) {
-            e.printStackTrace();
-            System.out.println("Đã xảy ra lỗi.`");
+        for (String target : historySearch) {
+            content.append(target).append("\n");
         }
+
+        FileUtil.writeToFile(HISTORY_FILE_PATH, content.toString());
     }
 
     /**
-     * Tối ưu hóa lại lịch sử tìm kiếm. Giữ tối đa `MAX_WORDS_HISTORY` từ gần đây nhất trong
-     * ArrayList.
+     * Refactor search history to limit the number of words.
      */
     public static void refactorHistory() {
-        if (historySearch.size() <= MAX_WORDS_HISTORY) {
-            return;
-        }
-        while (historySearch.size() > MAX_WORDS_HISTORY) {
-            historySearch.remove(0);
+        if (historySearch.size() > MAX_WORDS_HISTORY) {
+            historySearch.subList(0, historySearch.size() - MAX_WORDS_HISTORY).clear();
         }
     }
 }

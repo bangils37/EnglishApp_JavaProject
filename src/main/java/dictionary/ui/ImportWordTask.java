@@ -25,9 +25,9 @@ public class ImportWordTask extends Task<Void> {
     }
 
     /**
-     * Nhập từ vào từ điển từ `file`. Cập nhật thanh tiến trình trong khi thực hiện.
+     * Import words to dictionary from `file`. Update the progress bar at the same time.
      *
-     * @return không có gì
+     * @return nothing
      */
     @Override
     protected Void call() {
@@ -77,7 +77,7 @@ public class ImportWordTask extends Task<Void> {
         return null;
     }
 
-    /** Hiển thị hộp thông báo thông tin thành công cho biết nhiệm vụ đã được thực hiện thành công. */
+    /** Popup a successful information box indicating the task has been successfully executed. */
     @Override
     protected void succeeded() {
         Alert alert = new Alert(AlertType.INFORMATION);
@@ -95,7 +95,7 @@ public class ImportWordTask extends Task<Void> {
         alert.show();
     }
 
-    /** Hiển thị hộp cảnh báo để đóng cửa sổ trong khi đang nhập từ. */
+    /** Popup a warning box for closing the stage while importing words. */
     @Override
     protected void cancelled() {
         Alert alert = new Alert(AlertType.WARNING);
@@ -114,7 +114,7 @@ public class ImportWordTask extends Task<Void> {
         alert.show();
     }
 
-    /** Hiển thị hộp thông báo lỗi chỉ ra lỗi được tìm thấy trong quá trình nhập từ. */
+    /** Popup an error box indicating error found while importing the words. */
     @Override
     protected void failed() {
         Alert alert = new Alert(AlertType.ERROR);
@@ -134,9 +134,9 @@ public class ImportWordTask extends Task<Void> {
     }
 
     /**
-     * Đặt CSS cho hộp thông báo trong trường hợp chế độ tối.
+     * Set CSS for alert box in case of dark mode.
      *
-     * @param alert hộp thông báo
+     * @param alert alert
      */
     private void setAlertCss(Alert alert) {
         if (!Application.isLightMode()) {
