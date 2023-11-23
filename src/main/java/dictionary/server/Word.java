@@ -5,10 +5,10 @@ public class Word {
     private String wordExplain;
 
     /**
-     * Constructor mới cho Word.
+     * Constructor new Word.
      *
-     * @param wordTarget Từ tiếng Anh
-     * @param wordExplain Định nghĩa tiếng Việt
+     * @param wordTarget English word
+     * @param wordExplain Vietnamese definition
      */
     public Word(String wordTarget, String wordExplain) {
         this.wordTarget = wordTarget;
@@ -16,27 +16,27 @@ public class Word {
     }
 
     /**
-     * Lấy từ tiếng Anh.
+     * Get the English word.
      *
-     * @return Từ tiếng Anh
+     * @return English word
      */
     public String getWordTarget() {
         return wordTarget;
     }
 
     /**
-     * Lấy định nghĩa của từ.
+     * Get definition of word.
      *
-     * @return Định nghĩa tiếng Việt của từ
+     * @return Vietnamese definition of word
      */
     public String getWordDefinition() {
         return wordExplain;
     }
 
     /**
-     * Thiết lập định nghĩa tiếng Việt cho từ.
+     * Set Vietnamese definition of the word.
      *
-     * @param wordExplain Định nghĩa tiếng Việt
+     * @param wordExplain Vietnamese definition
      */
     public void setWordExplain(String wordExplain) {
         this.wordExplain = wordExplain;

@@ -10,10 +10,10 @@ public class HelperUI {
     static final DirectoryChooser dirChooser = new DirectoryChooser();
 
     /**
-     * Sử dụng FileChooser để mở một cửa sổ popup để chọn file.
+     * Use FileChooser to open a popup window to choose the file.
      *
-     * @param stage sân khấu để mở FileChooser
-     * @return đường dẫn của file đã chọn
+     * @param stage the stage to open the FileChooser from
+     * @return path of the chosen file
      */
     public static String chooseFile(Stage stage) {
         File file = fileChooser.showOpenDialog(stage);
@@ -24,10 +24,10 @@ public class HelperUI {
     }
 
     /**
-     * Sử dụng DirectoryChooser để mở một cửa sổ popup để chọn thư mục.
+     * Use DirectoryChooser to open a popup window to choose the directory.
      *
-     * @param stage sân khấu để mở DirectoryChooser
-     * @return đường dẫn của thư mục đã chọn
+     * @param stage the stage to open the DirectoryChooser from
+     * @return path of the chosen directory
      */
     public static String chooseDir(Stage stage) {
         File dir = dirChooser.showDialog(stage);

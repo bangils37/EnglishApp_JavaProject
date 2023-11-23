@@ -9,9 +9,9 @@ import javazoom.jl.player.Player;
 
 public class TextToSpeech {
     /**
-     * Chuyển đổi văn bản tiếng Anh {@code text} thành giọng nói và phát nó với Google Translator TTS API
+     * Convert English input {@code text} to voice and play it with Google Translator TTS API
      *
-     * @param text Văn bản cần chuyển đổi thành giọng nói tiếng Anh
+     * @param text The text to be converted to voice in English
      */
     public static void playSoundGoogleTranslateEnToVi(String text) {
         try {
@@ -27,14 +27,14 @@ public class TextToSpeech {
             con.disconnect();
         } catch (Exception e) {
             e.printStackTrace();
-            System.err.println("Lỗi khi lấy giọng");
+            System.err.println("Error in getting voices");
         }
     }
 
     /**
-     * Chuyển đổi văn bản tiếng Việt {@code text} thành giọng nói và phát nó với Google Translator TTS API
+     * Convert Vietnamese input {@code text} to voice and play it with Google Translator TTS API
      *
-     * @param text Văn bản cần chuyển đổi thành giọng nói tiếng Việt
+     * @param text The text to be converted to voice in Vietnamese
      */
     public static void playSoundGoogleTranslateViToEn(String text) {
         try {
@@ -50,7 +50,7 @@ public class TextToSpeech {
             con.disconnect();
         } catch (Exception e) {
             e.printStackTrace();
-            System.err.println("Lỗi khi lấy giọng");
+            System.err.println("Error in getting voices");
         }
     }
 }

@@ -11,6 +11,7 @@ import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.Node;
 import javafx.scene.control.Alert;
+import javafx.scene.control.Alert.AlertType;
 import javafx.scene.control.Button;
 import javafx.scene.control.DialogPane;
 import javafx.scene.control.Label;
@@ -29,7 +30,7 @@ public class AddWord {
     @FXML private AnchorPane anchorPane;
     private ImportWordService service;
 
-    /** Focus vào `browseButton` khi mở cửa sổ. */
+    /** Focus on the `browseButton` when open the window. */
     @FXML
     private void initialize() {
         Platform.runLater(() -> browseButton.requestFocus());
@@ -39,9 +40,9 @@ public class AddWord {
     }
 
     /**
-     * Lưu từ và định nghĩa tương ứng vào từ điển dưới dạng văn bản HTML.
+     * Save the inputted word and its definition to the dictionary as HTML text format.
      *
-     * @param event sự kiện action
+     * @param event action event
      */
     @FXML
     public void saveWord(ActionEvent event) {
@@ -53,13 +54,13 @@ public class AddWord {
                         "<html dir=\"ltr\"><head></head><body contenteditable=\"true\">", "");
         definition = definition.replace("</body></html>", "");
         if (dictionary.insertWord(target, definition)) {
-            Alert alert = new Alert(Alert.AlertType.INFORMATION);
+            Alert alert = new Alert(AlertType.INFORMATION);
             setAlertCss(alert);
             alert.setTitle("Thông báo");
             alert.setContentText("Thêm từ `" + target + "` thành công!");
             alert.show();
         } else {
-            Alert alert = new Alert(Alert.AlertType.ERROR);
+            Alert alert = new Alert(AlertType.ERROR);
             setAlertCss(alert);
             alert.setTitle("Lỗi");
             alert.setContentText("Thêm từ `" + target + "` không thành công!");
@@ -70,9 +71,9 @@ public class AddWord {
     }
 
     /**
-     * Chọn file và hiển thị đường dẫn vào Label.
+     * Choose the file and print its path into the Label.
      *
-     * @param event sự kiện action
+     * @param event action event
      */
     @FXML
     public void chooseFile(ActionEvent event) {
@@ -82,7 +83,7 @@ public class AddWord {
     }
 
     /**
-     * Nếu người dùng đóng cửa sổ trong khi đang nhập (chưa hoàn thành), nhiệm vụ sẽ bị hủy.
+     * If user close the window while importing (hasn't finished) then the task will also cancel.
      */
     public void closeWhileImporting() {
         if (service != null) {
@@ -91,8 +92,8 @@ public class AddWord {
     }
 
     /**
-     * Nhập từ vựng từ tệp đã chọn vào từ điển. Tạo một nhiệm vụ nền để hiển thị thanh tiến trình của
-     * nhiệm vụ.
+     * Import words from the selected file into the dictionary. Make a background task for this to
+     * show the progress bar of the task as well.
      */
     @FXML
     public void submitImport() {
@@ -116,9 +117,9 @@ public class AddWord {
     }
 
     /**
-     * Thoát cửa sổ.
+     * Quit the window.
      *
-     * @param event sự kiện action
+     * @param event action event
      */
     @FXML
     public void quitWindow(ActionEvent event) {
@@ -127,9 +128,9 @@ public class AddWord {
     }
 
     /**
-     * Đặt CSS cho hộp thoại cảnh báo trong trường hợp chế độ tối.
+     * Set CSS for alert box in case of dark mode.
      *
-     * @param alert cảnh báo
+     * @param alert alert
      */
     private void setAlertCss(Alert alert) {
         if (!Application.isLightMode()) {

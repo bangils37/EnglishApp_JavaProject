@@ -10,19 +10,18 @@ import java.util.ArrayList;
 
 public class DatabaseDictionary extends Dictionary {
     private static final String HOST_NAME = "localhost";
-    private static final String DB_NAME = "en-vi-dictionary";
-    private static final String USER_NAME = "en-vi-dictionary";
-    private static final String PASSWORD = "n1-02-dictionary";
+    private static final String DB_NAME = "dictionary";
+    private static final String USER_NAME = "root";
+    private static final String PASSWORD = "123456";
     private static final String PORT = "3306";
-    private static final String MYSQL_URL =
-            "jdbc:mysql://" + HOST_NAME + ":" + PORT + "/" + DB_NAME;
+    private static final String MYSQL_URL = "jdbc:mysql://" + HOST_NAME + ":" + PORT + "/" + DB_NAME;
 
     private static Connection connection = null;
 
     /**
-     * Đóng kết nối đến cơ sở dữ liệu MYSQL.
+     * Close connection to MYSQL database.
      *
-     * @param connection Biến kết nối
+     * @param connection Connection variable
      */
     private static void close(Connection connection) {
         try {
@@ -35,9 +34,9 @@ public class DatabaseDictionary extends Dictionary {
     }
 
     /**
-     * Đóng PreparedStatement ps.
+     * Close the PreparedStatement ps.
      *
-     * @param ps PreparedStatement cần đóng
+     * @param ps PreparedStatement needed to close
      */
     private static void close(PreparedStatement ps) {
         try {
@@ -50,9 +49,9 @@ public class DatabaseDictionary extends Dictionary {
     }
 
     /**
-     * Đóng ResultSet rs.
+     * Close the ResultSet rs.
      *
-     * @param rs ResultSet cần đóng
+     * @param rs ResultSet needed to be close
      */
     private static void close(ResultSet rs) {
         try {
@@ -65,17 +64,22 @@ public class DatabaseDictionary extends Dictionary {
     }
 
     /**
-     * Kết nối đến cơ sở dữ liệu MYSQL.
+     * Connect to MYSQL database.
      *
-     * <p>Tham khảo: https://stackoverflow.com/questions/2839321/connect-java-to-a-mysql-database
+     * <p>
+     * Reference:
+     * https://stackoverflow.com/questions/2839321/connect-java-to-a-mysql-database
      */
     private void connectToDatabase() throws SQLException {
-        System.out.println("Đang kết nối đến cơ sở dữ liệu...");
+        System.out.println("Connecting to database...");
         connection = DriverManager.getConnection(MYSQL_URL, USER_NAME, PASSWORD);
-        System.out.println("Đã kết nối đến cơ sở dữ liệu!\n");
+        System.out.println("Database connected!\n");
     }
 
-    /** Kết nối đến cơ sở dữ liệu MYSQL. Thêm tất cả từ điển từ cơ sở dữ liệu vào cấu trúc dữ liệu Trie. */
+    /**
+     * Connect to MYSQL database. Add all words on the database into Trie data
+     * structure.
+     */
     @Override
     public void initialize() throws SQLException {
         connectToDatabase();
@@ -85,18 +89,20 @@ public class DatabaseDictionary extends Dictionary {
         }
     }
 
-    /** Đóng kết nối đến cơ sở dữ liệu. */
+    /** Close the Database connection. */
     @Override
     public void close() {
         close(connection);
-        System.out.println("Đã ngắt kết nối với cơ sở dữ liệu!");
+        System.out.println("Database disconnected!");
     }
 
     /**
-     * Tra cứu từ tiếng Anh `target` trong cơ sở dữ liệu (tìm từ chính xác `target`).
+     * Lookup an English word `target` in database (look for the exact word
+     * `target`).
      *
-     * @param target từ cần tìm kiếm (toàn bộ từ)
-     * @return định nghĩa tiếng Việt của `target`, nếu không tìm thấy trả về "404" dưới dạng String.
+     * @param target the searched word (full word)
+     * @return the Vietnamese definition of `target`, if not found return "404" as a
+     *         String.
      */
     @Override
     public String lookUpWord(final String target) {
@@ -125,11 +131,11 @@ public class DatabaseDictionary extends Dictionary {
     }
 
     /**
-     * Chèn từ mới vào cơ sở dữ liệu.
+     * Insert new word to database.
      *
-     * @param target Từ tiếng Anh
-     * @param definition Định nghĩa tiếng Việt
-     * @return true nếu `target` chưa được thêm, ngược lại trả về false
+     * @param target     English word
+     * @param definition Vietnamese definition
+     * @return true if `target` hasn't been added yet, false otherwise
      */
     @Override
     public boolean insertWord(final String target, final String definition) {
@@ -141,7 +147,7 @@ public class DatabaseDictionary extends Dictionary {
             try {
                 ps.executeUpdate();
             } catch (SQLIntegrityConstraintViolationException e) {
-                // `word` đã có trong cơ sở dữ liệu
+                // `word` is already in database
                 return false;
             } finally {
                 close(ps);
@@ -155,12 +161,13 @@ public class DatabaseDictionary extends Dictionary {
     }
 
     /**
-     * Xóa từ `target` khỏi cơ sở dữ liệu.
+     * Delete the word `target` from the database.
      *
-     * <p>Không có gì xảy ra nếu `target` không có trong cơ sở dữ liệu để xóa.
+     * <p>
+     * Nothing happens if `target` is not in the database for deletion.
      *
-     * @param target từ đã xóa
-     * @return true nếu xóa thành công, ngược lại trả về false
+     * @param target the deleted word
+     * @return true if successfully delete, false otherwise
      */
     @Override
     public boolean deleteWord(final String target) {
@@ -185,13 +192,14 @@ public class DatabaseDictionary extends Dictionary {
     }
 
     /**
-     * Cập nhật từ `target` với định nghĩa tương ứng.
+     * Update the word `target` to the according definition.
      *
-     * <p>Không có gì xảy ra nếu `target` không có trong cơ sở dữ liệu để cập nhật.
+     * <p>
+     * Nothing happens if `target` is not in the database for update.
      *
-     * @param target từ đã cập nhật
-     * @param definition định nghĩa đã cập nhật
-     * @return true nếu cập nhật thành công, ngược lại trả về false
+     * @param target     the update word
+     * @param definition the update definition
+     * @return true if successfully updated, false otherwise
      */
     @Override
     public boolean updateWordDefinition(final String target, final String definition) {
@@ -215,10 +223,10 @@ public class DatabaseDictionary extends Dictionary {
     }
 
     /**
-     * Lấy tất cả từ trong kết quả của câu truy vấn SQL được chỉ định.
+     * Get all words from result set of the given SQL query.
      *
-     * @param ps câu truy vấn SQL được bao gồm trong PreparedStatement
-     * @return ArrayList của Words
+     * @param ps the SQL query included in PreparedStatement
+     * @return ArrayList of Words
      * @throws SQLException exception
      */
     private ArrayList<Word> getWordsFromResultSet(PreparedStatement ps) throws SQLException {
@@ -240,9 +248,9 @@ public class DatabaseDictionary extends Dictionary {
     }
 
     /**
-     * Lấy tất cả từ vào một `ArrayList(Word)>`.
+     * Get all words into an `ArrayList(Word)>`.
      *
-     * @return một 'ArrayList(Word)' chứa tất cả các từ từ cơ sở dữ liệu
+     * @return an 'ArrayList(Word)' include all the words from the database
      */
     @Override
     public ArrayList<Word> getAllWords() {
@@ -257,11 +265,12 @@ public class DatabaseDictionary extends Dictionary {
     }
 
     /**
-     * Lấy tất cả các từ từ Cơ sở dữ liệu có `id` từ `wordIndexFrom` đến `wordIndexTo`.
+     * Get all the words from the Database has `id` from `wordIndexFrom` to
+     * `wordIndexTo`.
      *
-     * @param wordIndexFrom giới hạn bên trái
-     * @param wordIndexTo giới hạn bên phải
-     * @return một ArrayList của Word lấy từ cơ sở dữ liệu
+     * @param wordIndexFrom left bound
+     * @param wordIndexTo   right bound
+     * @return an ArrayList of Word get from the database
      */
     public ArrayList<Word> getWordsPartial(int wordIndexFrom, int wordIndexTo) {
         final String SQL_QUERY = "SELECT * FROM dictionary WHERE id >= ? AND id <= ?";
@@ -277,9 +286,10 @@ public class DatabaseDictionary extends Dictionary {
     }
 
     /**
-     * Lấy tất cả các từ chỉ có target từ cơ sở dữ liệu (chỉ target, không bao gồm định nghĩa).
+     * Get all words target from the database (only target, non include the
+     * definition).
      *
-     * @return ArrayList chuỗi các từ target
+     * @return ArrayList of string of words target
      */
     @Override
     public ArrayList<String> getAllWordTargets() {

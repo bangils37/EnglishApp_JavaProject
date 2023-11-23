@@ -65,9 +65,7 @@ public class Application {
         lightMode = !lightMode;
     }
 
-    /**
-     * Tập trung vào ô nhập văn bản `inputText` khi mở ứng dụng. Chuẩn bị danh sách tìm kiếm sau đó.
-     */
+    /** Focus on the inputText TextField when first open. Prepare the search list after that. */
     @FXML
     private void initialize() {
         Platform.runLater(() -> inputText.requestFocus());
@@ -109,10 +107,10 @@ public class Application {
     }
 
     /**
-     * Chuẩn bị biểu tượng của tất cả các nút dựa trên chế độ cung cấp (chế độ tối là 0 và chế độ
-     * sáng là 1).
+     * Prepare the icons of all the buttons based on the given `mode` (dark mode is 0 and light mode
+     * is 1).
      *
-     * @param mode biểu tượng chế độ sáng hoặc tối
+     * @param mode light mode or dark mode icons
      */
     public void prepareButtonIcon(boolean mode) {
         String suffix = (mode ? "light" : "dark");
@@ -156,10 +154,9 @@ public class Application {
     }
 
     /**
-     * Di chuyển đến danh sách tìm kiếm bằng cách nhấn phím mũi tên XUỐNG khi ở `inputText`
-     * TextField.
+     * Move to the search list by pressing DOWN arrow key when at the `inputText` TextField.
      *
-     * @param event sự kiện hành động
+     * @param event action event
      */
     @FXML
     public void changeFocusDown(KeyEvent event) {
@@ -171,7 +168,7 @@ public class Application {
         }
     }
 
-    /** Tải biểu tượng lịch sử vào biểu tượng hình ảnh tương ứng. */
+    /** Load the history icon into its corresponding icon image. */
     private void prepareHistoryIcon(boolean mode) {
         try {
             historyIcon =
@@ -187,8 +184,8 @@ public class Application {
     }
 
     /**
-     * Chuẩn bị danh sách tìm kiếm có văn bản trong `inputText` là tiền tố. Các từ trong lịch sử
-     * xuất hiện đầu tiên trong danh sách và chúng bắt đầu bằng một biểu tượng "lịch sử".
+     * Prepare the search lists having the text in `inputText` as prefix. Words in the history base
+     * appears first in the list, and they begin with a "history" icon.
      */
     public void prepareSearchList() {
         searchList.getItems().clear();
@@ -232,7 +229,7 @@ public class Application {
                 });
     }
 
-    /** Tra cứu từ trong từ điển và hiển thị định nghĩa của nó trong `webView`. */
+    /** Look up the word in the dictionary and show its definition in `webView`. */
     @FXML
     public void lookUpWord() {
         String target = inputText.getText();
@@ -271,9 +268,9 @@ public class Application {
     }
 
     /**
-     * Tra cứu từ khi nhấn Enter tại từ đã chọn từ danh sách tìm kiếm
+     * Look up word when pressing Enter at the selected word from the search list
      *
-     * @param e sự kiện phím
+     * @param e key event
      */
     @FXML
     public void selectWord(KeyEvent e) {
@@ -297,11 +294,11 @@ public class Application {
     }
 
     /**
-     * Nhấp đôi vào một từ trong danh sách tìm kiếm để tra cứu định nghĩa của nó.
+     * Double-click a word in the search list to look up its definition.
      *
-     * <p>Từ đã nhấp đôi sẽ được thêm vào lịch sử.
+     * <p>The double-clicked word will be added to the history though.
      *
-     * @param mouseEvent sự kiện chuột
+     * @param mouseEvent mouse event
      */
     @FXML
     public void selectWordDoubleClick(MouseEvent mouseEvent) {
@@ -317,9 +314,9 @@ public class Application {
     }
 
     /**
-     * Chuyển đổi sang cảnh dịch câu (Google Translate).
+     * Change scene to sentences translating (Google Translate).
      *
-     * @param event sự kiện hành động
+     * @param event action event
      */
     @FXML
     public void changeToSentencesTranslating(ActionEvent event) {
@@ -349,7 +346,7 @@ public class Application {
         }
     }
 
-    /** Phát âm từ tiếng Anh đang hiển thị trong `webView`. */
+    /** Pronounce the English word that is currently showed in the `webView`. */
     @FXML
     public void playSound() {
         if (!lastLookUpWord.isEmpty()) {
@@ -358,7 +355,7 @@ public class Application {
     }
 
     /**
-     * Mở cửa sổ xuất dữ liệu từ điển để xuất từ điển ra tệp.
+     * Open (pop up) export to file window for words export to file utility.
      *
      * @param event action event
      */
@@ -387,7 +384,7 @@ public class Application {
     }
 
     /**
-     * Mở cửa sổ hiển thị thông tin về ứng dụng.
+     * Open (pop up) information details of the application.
      *
      * @param event action event
      */
@@ -398,7 +395,7 @@ public class Application {
                             Objects.requireNonNull(
                                     getClass()
                                             .getClassLoader()
-                                            .getResource("fxml/InformationPopup.fxml")));
+                                            .getResource("")));
             Stage infStage = new Stage();
             Stage appStage = (Stage) ((Node) event.getSource()).getScene().getWindow();
             infStage.initOwner(appStage);
@@ -414,7 +411,7 @@ public class Application {
     }
 
     /**
-     * Mở cửa sổ hiển thị hướng dẫn sử dụng ứng dụng.
+     * Open (pop up) the application instruction.
      *
      * @param event action event
      */
@@ -442,7 +439,7 @@ public class Application {
     }
 
     /**
-     * Mở cửa sổ chỉnh sửa từ cho từ hiện tại đang được tìm kiếm (ở `webView`).
+     * Open (pop up) the edit word window for the currently looked up word (in the `webView`).
      *
      * @param event action event
      */
@@ -488,7 +485,7 @@ public class Application {
         }
     }
 
-    /** Mở cửa sổ xác nhận xóa cho từ vừa tìm kiếm (ở `webView`). */
+    /** Open (pop up) delete confirmation for the last looked up word (in the `webView`). */
     @FXML
     public void deleteWord() {
         if (lastLookUpWord.isEmpty()) {
@@ -530,7 +527,7 @@ public class Application {
     }
 
     /**
-     * Mở cửa sổ thêm từ để thêm từ mới vào từ điển.
+     * Open (pop up) the add word window for adding new words to the dictionary.
      *
      * @param event action event
      */
@@ -570,9 +567,9 @@ public class Application {
     }
 
     /**
-     * Thiết lập CSS cho hộp thoại cảnh báo trong trường hợp chế độ tối.
+     * Set CSS for alert box in case of dark mode.
      *
-     * @param alert cảnh báo
+     * @param alert alert
      */
     private void setAlertCss(Alert alert) {
         if (!Application.isLightMode()) {

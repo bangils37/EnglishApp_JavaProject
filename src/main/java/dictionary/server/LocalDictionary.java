@@ -7,9 +7,9 @@ public class LocalDictionary extends Dictionary {
     private static final ArrayList<Word> words = new ArrayList<>();
 
     /**
-     * Lấy tất cả các từ trong từ điển.
+     * Get all words in the dictionary.
      *
-     * @return ArrayList của Word
+     * @return ArrayList of Word
      */
     @Override
     public ArrayList<Word> getAllWords() {
@@ -17,9 +17,9 @@ public class LocalDictionary extends Dictionary {
     }
 
     /**
-     * Lấy tất cả các từ tiếng Anh trong từ điển vào một ArrayList của String.
+     * Get all English words in the dictionary into an ArrayList of String.
      *
-     * @return ArrayList của String chứa tất cả các từ
+     * @return ArrayList of String of all words
      */
     @Override
     public ArrayList<String> getAllWordTargets() {
@@ -32,10 +32,10 @@ public class LocalDictionary extends Dictionary {
     }
 
     /**
-     * Tra cứu từ `target` và trả về định nghĩa tương ứng.
+     * Lookup the word `target` and return the corresponding definition.
      *
-     * @param target từ cần tra cứu
-     * @return định nghĩa, nếu không tìm thấy sẽ trả về "404" dưới dạng String.
+     * @param target the lookup word
+     * @return the definition, if not found "404" is returned as a String.
      */
     @Override
     public String lookUpWord(final String target) {
@@ -49,11 +49,11 @@ public class LocalDictionary extends Dictionary {
     }
 
     /**
-     * Thêm một từ mới vào từ điển.
+     * Insert a new word to dictionary.
      *
-     * @param target từ cần thêm
-     * @param definition định nghĩa
-     * @return true nếu `target` chưa được thêm, ngược lại là false
+     * @param target the word
+     * @param definition the definition
+     * @return true if `target` hasn't been added yet, false otherwise
      */
     @Override
     public boolean insertWord(final String target, final String definition) {
@@ -69,10 +69,10 @@ public class LocalDictionary extends Dictionary {
     }
 
     /**
-     * Xóa từ `target`.
+     * Delete the word `target`.
      *
-     * @param target từ cần xóa
-     * @return true nếu xóa thành công, ngược lại là false
+     * @param target the deleted word
+     * @return true if successfully delete, false otherwise
      */
     @Override
     public boolean deleteWord(final String target) {
@@ -87,11 +87,11 @@ public class LocalDictionary extends Dictionary {
     }
 
     /**
-     * Cập nhật định nghĩa tiếng Việt của `target` thành `definition`.
+     * Update the Vietnamese definition of `target` to `definition`.
      *
-     * @param target từ cần cập nhật
-     * @param definition định nghĩa mới
-     * @return true nếu cập nhật thành công, ngược lại là false
+     * @param target the word
+     * @param definition the new definition
+     * @return true if successfully updated, false otherwise
      */
     @Override
     public boolean updateWordDefinition(final String target, final String definition) {

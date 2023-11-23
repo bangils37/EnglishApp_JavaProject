@@ -37,10 +37,10 @@ public class SentencesTranslating {
     }
 
     /**
-     * Chuẩn bị biểu tượng cho tất cả các nút dựa trên trạng thái `mode` cho chủ đề (chế độ tối là 0 và chế độ sáng
-     * là 1).
+     * Prepare the icons of all the buttons based on the given `mode` (dark mode is 0 and light mode
+     * is 1).
      *
-     * @param mode biểu tượng chủ đề sáng hoặc tối
+     * @param mode light mode or dark mode icons
      */
     public void prepareButtonIcon(boolean mode) {
         String suffix = (mode ? "light" : "dark");
@@ -68,8 +68,8 @@ public class SentencesTranslating {
     }
 
     /**
-     * Dịch văn bản từ tiếng Anh sang tiếng Việt (hoặc ngược lại, phụ thuộc vào trạng thái hiện tại `enToVi`)
-     * và xuất nội dung vào sinkText.
+     * Translate the text from English to Vietnamese (or reverse, depends on current state `enToVi`)
+     * and output the content to the sinkText.
      */
     @FXML
     public void translateEnToVi() {
@@ -81,9 +81,9 @@ public class SentencesTranslating {
     }
 
     /**
-     * Chuyển từ cảnh Sentences Translator về ứng dụng chính.
+     * Change scene from Sentences Translator to the main Application.
      *
-     * @param event sự kiện hành động
+     * @param event action event
      */
     @FXML
     public void changeToApplication(ActionEvent event) {
@@ -105,7 +105,7 @@ public class SentencesTranslating {
                                                                     ? "/css/Application-light.css"
                                                                     : "/css/Application-dark.css")))
                                     .toExternalForm());
-            appStage.setTitle("Từ Điển");
+            appStage.setTitle("Dictionary");
             appStage.setScene(scene);
             appStage.show();
         } catch (IOException e) {
@@ -114,9 +114,9 @@ public class SentencesTranslating {
     }
 
     /**
-     * Mở (popup) một cửa sổ hiển thị hướng dẫn về cách sử dụng bộ dịch câu.
+     * Open (popup) a window showing instruction on how to use the sentence translator.
      *
-     * @param event sự kiện hành động
+     * @param event action event
      */
     @FXML
     public void showSentencesInstruction(ActionEvent event) {
@@ -150,7 +150,7 @@ public class SentencesTranslating {
     }
 
     /**
-     * Phát âm thanh TTS từ văn bản nguồn (tiếng Anh sang tiếng Việt hoặc ngược lại phụ thuộc vào trạng thái hiện tại
+     * Play sound TTS the source text (English to Vietnamese or reverse depends on current state
      * `enToVi`).
      */
     @FXML
@@ -164,17 +164,18 @@ public class SentencesTranslating {
     }
 
     /**
-     * Thay đổi trạng thái hiện tại `enToVi` để chuyển đổi giữa tiếng Anh và tiếng Việt.
+     * Change the current state `enToVi` to switch between English to Vietnamese or Vietnamese to
+     * English.
      */
     @FXML
     public void swapLanguage() {
         enToVi = !enToVi;
         if (enToVi) {
-            upButton.setText("Tiếng Anh");
-            downButton.setText("Tiếng Việt");
+            upButton.setText("English");
+            downButton.setText("Vietnamese");
         } else {
-            upButton.setText("Tiếng Việt");
-            downButton.setText("Tiếng Anh");
+            upButton.setText("Vietnamese");
+            downButton.setText("English");
         }
     }
 }
