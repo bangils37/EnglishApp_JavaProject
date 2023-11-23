@@ -65,10 +65,6 @@ public class DatabaseDictionary extends Dictionary {
 
     /**
      * Connect to MYSQL database.
-     *
-     * <p>
-     * Reference:
-     * https://stackoverflow.com/questions/2839321/connect-java-to-a-mysql-database
      */
     private void connectToDatabase() throws SQLException {
         System.out.println("Connecting to database...");
