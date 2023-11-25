@@ -1,7 +1,12 @@
 package dictionary.ui.controller;
 
-import dictionary.server.TextToSpeech;
-import dictionary.server.TranslatorApi;
+import dictionary.translate.SpeakerStrategy;
+import dictionary.translate.TranslationStrategy;
+import dictionary.translate.strategy.EnSpeakerStrategy;
+import dictionary.translate.strategy.EnToViTranslationStrategy;
+import dictionary.translate.strategy.ViSpeakerStrategy;
+import dictionary.translate.strategy.ViToEnTranslationStrategy;
+
 import java.io.IOException;
 import java.util.Objects;
 import javafx.event.ActionEvent;
@@ -18,18 +23,33 @@ import javafx.stage.Modality;
 import javafx.stage.Stage;
 
 public class SentencesTranslating {
-    @FXML private TextArea sourceText;
-    @FXML private TextArea sinkText;
+    @FXML
+    private TextArea sourceText;
+    @FXML
+    private TextArea sinkText;
     private boolean enToVi = true;
-    @FXML private Label upButton;
-    @FXML private Label downButton;
-    @FXML private Button translateButton;
-    @FXML private Button helpButton;
-    @FXML private Button dictionaryButton;
-    @FXML private Button voiceButton;
-    @FXML private Button alterButton;
+    @FXML
+    private Label upButton;
+    @FXML
+    private Label downButton;
+    @FXML
+    private Button translateButton;
+    @FXML
+    private Button helpButton;
+    @FXML
+    private Button dictionaryButton;
+    @FXML
+    private Button voiceButton;
+    @FXML
+    private Button alterButton;
 
-    public SentencesTranslating() {}
+    private TranslationStrategy viToEnStrategy = new ViToEnTranslationStrategy();
+    private TranslationStrategy enToViStrategy = new EnToViTranslationStrategy();
+    private SpeakerStrategy viSpeakerStrategy = new ViSpeakerStrategy();
+    private SpeakerStrategy enSpeakerStrategy = new EnSpeakerStrategy();
+
+    public SentencesTranslating() {
+    }
 
     @FXML
     private void initialize() {
@@ -37,7 +57,8 @@ public class SentencesTranslating {
     }
 
     /**
-     * Prepare the icons of all the buttons based on the given `mode` (dark mode is 0 and light mode
+     * Prepare the icons of all the buttons based on the given `mode` (dark mode is
+     * 0 and light mode
      * is 1).
      *
      * @param mode light mode or dark mode icons
@@ -68,16 +89,16 @@ public class SentencesTranslating {
     }
 
     /**
-     * Translate the text from English to Vietnamese (or reverse, depends on current state `enToVi`)
+     * Translate the text from English to Vietnamese (or reverse, depends on current
+     * state `enToVi`)
      * and output the content to the sinkText.
      */
     @FXML
     public void translateEnToVi() {
         String source = sourceText.getText();
         sinkText.setText(
-                (enToVi
-                        ? TranslatorApi.translateEnToVi(source)
-                        : TranslatorApi.translateViToEn(source)));
+                (enToVi ? enToViStrategy : viToEnStrategy)
+                        .translate(source));
     }
 
     /**
@@ -88,22 +109,21 @@ public class SentencesTranslating {
     @FXML
     public void changeToApplication(ActionEvent event) {
         try {
-            Parent root =
-                    FXMLLoader.load(
-                            Objects.requireNonNull(
-                                    getClass()
-                                            .getClassLoader()
-                                            .getResource("fxml/Application.fxml")));
+            Parent root = FXMLLoader.load(
+                    Objects.requireNonNull(
+                            getClass()
+                                    .getClassLoader()
+                                    .getResource("fxml/Application.fxml")));
             Stage appStage = (Stage) ((Node) event.getSource()).getScene().getWindow();
             Scene scene = new Scene(root);
             scene.getStylesheets()
                     .add(
                             Objects.requireNonNull(
-                                            getClass()
-                                                    .getResource(
-                                                            (Application.isLightMode()
-                                                                    ? "/css/Application-light.css"
-                                                                    : "/css/Application-dark.css")))
+                                    getClass()
+                                            .getResource(
+                                                    (Application.isLightMode()
+                                                            ? "/css/Application-light.css"
+                                                            : "/css/Application-dark.css")))
                                     .toExternalForm());
             appStage.setTitle("Dictionary");
             appStage.setScene(scene);
@@ -114,20 +134,20 @@ public class SentencesTranslating {
     }
 
     /**
-     * Open (popup) a window showing instruction on how to use the sentence translator.
+     * Open (popup) a window showing instruction on how to use the sentence
+     * translator.
      *
      * @param event action event
      */
     @FXML
     public void showSentencesInstruction(ActionEvent event) {
         try {
-            Parent root =
-                    FXMLLoader.load(
-                            Objects.requireNonNull(
-                                    getClass()
-                                            .getClassLoader()
-                                            .getResource(
-                                                    "fxml/SentencesTranslatingInstructionPopup.fxml")));
+            Parent root = FXMLLoader.load(
+                    Objects.requireNonNull(
+                            getClass()
+                                    .getClassLoader()
+                                    .getResource(
+                                            "fxml/SentencesTranslatingInstructionPopup.fxml")));
             Stage senInsStage = new Stage();
             Stage appStage = (Stage) ((Node) event.getSource()).getScene().getWindow();
             senInsStage.initOwner(appStage);
@@ -136,7 +156,7 @@ public class SentencesTranslating {
                 scene.getStylesheets()
                         .add(
                                 Objects.requireNonNull(
-                                                getClass().getResource("/css/General-dark.css"))
+                                        getClass().getResource("/css/General-dark.css"))
                                         .toExternalForm());
             }
             senInsStage.setTitle("Hướng dẫn sử dụng");
@@ -150,21 +170,19 @@ public class SentencesTranslating {
     }
 
     /**
-     * Play sound TTS the source text (English to Vietnamese or reverse depends on current state
+     * Play sound TTS the source text (English to Vietnamese or reverse depends on
+     * current state
      * `enToVi`).
      */
     @FXML
     public void textToSpeech() {
         String source = sourceText.getText();
-        if (enToVi) {
-            TextToSpeech.playSoundGoogleTranslateEnToVi(source);
-        } else {
-            TextToSpeech.playSoundGoogleTranslateViToEn(source);
-        }
+        (enToVi ? enSpeakerStrategy : viSpeakerStrategy).speak(source);
     }
 
     /**
-     * Change the current state `enToVi` to switch between English to Vietnamese or Vietnamese to
+     * Change the current state `enToVi` to switch between English to Vietnamese or
+     * Vietnamese to
      * English.
      */
     @FXML

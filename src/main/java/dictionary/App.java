@@ -1,13 +1,13 @@
 package dictionary;
 
-import dictionary.server.DatabaseDictionary;
-import dictionary.server.Dictionary;
-import dictionary.server.History;
-import dictionary.server.LocalDictionary;
 import java.sql.SQLException;
 import java.util.Objects;
 import java.util.Optional;
 
+import dictionary.core.DatabaseDictionary;
+import dictionary.core.Dictionary;
+import dictionary.core.History;
+import dictionary.core.LocalDictionary;
 import javafx.application.Application;
 import javafx.application.Platform;
 import javafx.fxml.FXMLLoader;
@@ -27,7 +27,7 @@ public class App extends Application {
      * @param args cmd arguments
      */
     public static void main(String[] args) {
-        History.loadHistory();
+        History.getInstance().loadHistory();
         launch();
     }
 
@@ -50,7 +50,7 @@ public class App extends Application {
             primaryStage.setOnCloseRequest(
                     arg0 -> {
                         dictionary.close();
-                        History.exportHistory();
+                        History.getInstance().exportHistory();
                         Platform.exit();
                         System.exit(0);
                     });

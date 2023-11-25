@@ -2,9 +2,11 @@ package dictionary.ui.controller;
 
 import static dictionary.App.dictionary;
 
-import dictionary.server.History;
-import dictionary.server.TextToSpeech;
-import dictionary.server.Trie;
+import dictionary.core.History;
+import dictionary.core.Trie;
+import dictionary.translate.SpeakerStrategy;
+import dictionary.translate.strategy.EnSpeakerStrategy;
+
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.util.ArrayList;
@@ -40,22 +42,35 @@ import javafx.util.Callback;
 public class Application {
     public static boolean lightMode = true;
     private String lastLookUpWord = "";
-    @FXML private TextField inputText;
-    @FXML private ListView<String> searchList;
-    @FXML private WebView webView;
+    @FXML
+    private TextField inputText;
+    @FXML
+    private ListView<String> searchList;
+    @FXML
+    private WebView webView;
     private int lastIndex = 0;
     private Image historyIcon;
-    @FXML private Button addWordButton;
-    @FXML private Button showInformationButton;
-    @FXML private Button showInstructionButton;
-    @FXML private Button exportButton;
-    @FXML private Button pronounceButton;
-    @FXML private Button editButton;
-    @FXML private Button deleteButton;
-    @FXML private Button googleButton;
-    @FXML private Button modeToggle;
+    @FXML
+    private Button addWordButton;
+    @FXML
+    private Button showInformationButton;
+    @FXML
+    private Button showInstructionButton;
+    @FXML
+    private Button exportButton;
+    @FXML
+    private Button pronounceButton;
+    @FXML
+    private Button editButton;
+    @FXML
+    private Button deleteButton;
+    @FXML
+    private Button googleButton;
+    @FXML
+    private Button modeToggle;
 
-    public Application() {}
+    public Application() {
+    }
 
     public static boolean isLightMode() {
         return lightMode;
@@ -65,7 +80,10 @@ public class Application {
         lightMode = !lightMode;
     }
 
-    /** Focus on the inputText TextField when first open. Prepare the search list after that. */
+    /**
+     * Focus on the inputText TextField when first open. Prepare the search list
+     * after that.
+     */
     @FXML
     private void initialize() {
         Platform.runLater(() -> inputText.requestFocus());
@@ -107,7 +125,8 @@ public class Application {
     }
 
     /**
-     * Prepare the icons of all the buttons based on the given `mode` (dark mode is 0 and light mode
+     * Prepare the icons of all the buttons based on the given `mode` (dark mode is
+     * 0 and light mode
      * is 1).
      *
      * @param mode light mode or dark mode icons
@@ -154,7 +173,8 @@ public class Application {
     }
 
     /**
-     * Move to the search list by pressing DOWN arrow key when at the `inputText` TextField.
+     * Move to the search list by pressing DOWN arrow key when at the `inputText`
+     * TextField.
      *
      * @param event action event
      */
@@ -171,12 +191,11 @@ public class Application {
     /** Load the history icon into its corresponding icon image. */
     private void prepareHistoryIcon(boolean mode) {
         try {
-            historyIcon =
-                    new Image(
-                            new FileInputStream(
-                                    "src/main/resources/icon/history-icon-"
-                                            + (mode ? "light" : "dark")
-                                            + ".png"));
+            historyIcon = new Image(
+                    new FileInputStream(
+                            "src/main/resources/icon/history-icon-"
+                                    + (mode ? "light" : "dark")
+                                    + ".png"));
 
         } catch (IOException e) {
             e.printStackTrace();
@@ -184,14 +203,15 @@ public class Application {
     }
 
     /**
-     * Prepare the search lists having the text in `inputText` as prefix. Words in the history base
+     * Prepare the search lists having the text in `inputText` as prefix. Words in
+     * the history base
      * appears first in the list, and they begin with a "history" icon.
      */
     public void prepareSearchList() {
         searchList.getItems().clear();
         String target = inputText.getText();
-        ArrayList<String> searchedWords = Trie.search(target);
-        ArrayList<String> allHistory = History.getHistorySearch();
+        ArrayList<String> searchedWords = Trie.getInstance().search(target);
+        ArrayList<String> allHistory = History.getInstance().getHistorySearch();
         for (int i = allHistory.size() - 1; i >= 0; i--) {
             if (target.isEmpty() || allHistory.get(i).startsWith(target)) {
                 searchList.getItems().add("#" + allHistory.get(i));
@@ -237,7 +257,7 @@ public class Application {
             target = target.substring(1);
         }
         if (!target.isEmpty()) {
-            History.addWordToHistory(target);
+            History.getInstance().addWordToHistory(target);
         }
 
         String definition = dictionary.lookUpWord(target);
@@ -258,10 +278,9 @@ public class Application {
         } else {
             lastLookUpWord = target;
             if (!Application.isLightMode()) {
-                definition =
-                        "<html><body bgcolor='#262837' style='color:#babccf'>"
-                                + definition
-                                + "</body></html>";
+                definition = "<html><body bgcolor='#262837' style='color:#babccf'>"
+                        + definition
+                        + "</body></html>";
             }
             webView.getEngine().loadContent(definition, "text/html");
         }
@@ -296,7 +315,8 @@ public class Application {
     /**
      * Double-click a word in the search list to look up its definition.
      *
-     * <p>The double-clicked word will be added to the history though.
+     * <p>
+     * The double-clicked word will be added to the history though.
      *
      * @param mouseEvent mouse event
      */
@@ -321,21 +341,20 @@ public class Application {
     @FXML
     public void changeToSentencesTranslating(ActionEvent event) {
         try {
-            Parent root =
-                    FXMLLoader.load(
-                            Objects.requireNonNull(
-                                    getClass()
-                                            .getClassLoader()
-                                            .getResource("fxml/SentencesTranslating.fxml")));
+            Parent root = FXMLLoader.load(
+                    Objects.requireNonNull(
+                            getClass()
+                                    .getClassLoader()
+                                    .getResource("fxml/SentencesTranslating.fxml")));
             Stage appStage = (Stage) ((Node) event.getSource()).getScene().getWindow();
             Scene scene = new Scene(root);
             if (!Application.isLightMode()) {
                 scene.getStylesheets()
                         .add(
                                 Objects.requireNonNull(
-                                                getClass()
-                                                        .getResource(
-                                                                "/css/SentencesTranslating-dark.css"))
+                                        getClass()
+                                                .getResource(
+                                                        "/css/SentencesTranslating-dark.css"))
                                         .toExternalForm());
             }
             appStage.setTitle("Sentences Translator");
@@ -350,7 +369,8 @@ public class Application {
     @FXML
     public void playSound() {
         if (!lastLookUpWord.isEmpty()) {
-            TextToSpeech.playSoundGoogleTranslateEnToVi(lastLookUpWord);
+            SpeakerStrategy speakerStrategy = new EnSpeakerStrategy();
+            speakerStrategy.speak(lastLookUpWord);
         }
     }
 
@@ -362,12 +382,11 @@ public class Application {
     @FXML
     public void exportToFile(ActionEvent event) {
         try {
-            Parent root =
-                    FXMLLoader.load(
-                            Objects.requireNonNull(
-                                    getClass()
-                                            .getClassLoader()
-                                            .getResource("fxml/ExportToFile.fxml")));
+            Parent root = FXMLLoader.load(
+                    Objects.requireNonNull(
+                            getClass()
+                                    .getClassLoader()
+                                    .getResource("fxml/ExportToFile.fxml")));
             Stage appStage = (Stage) ((Node) event.getSource()).getScene().getWindow();
             Stage newStage = new Stage();
             Scene scene = new Scene(root);
@@ -390,12 +409,11 @@ public class Application {
      */
     public void showInformation(ActionEvent event) {
         try {
-            Parent root =
-                    FXMLLoader.load(
-                            Objects.requireNonNull(
-                                    getClass()
-                                            .getClassLoader()
-                                            .getResource("")));
+            Parent root = FXMLLoader.load(
+                    Objects.requireNonNull(
+                            getClass()
+                                    .getClassLoader()
+                                    .getResource("")));
             Stage infStage = new Stage();
             Stage appStage = (Stage) ((Node) event.getSource()).getScene().getWindow();
             infStage.initOwner(appStage);
@@ -418,12 +436,11 @@ public class Application {
     @FXML
     public void showInstruction(ActionEvent event) {
         try {
-            Parent root =
-                    FXMLLoader.load(
-                            Objects.requireNonNull(
-                                    getClass()
-                                            .getClassLoader()
-                                            .getResource("fxml/InstructionPopup.fxml")));
+            Parent root = FXMLLoader.load(
+                    Objects.requireNonNull(
+                            getClass()
+                                    .getClassLoader()
+                                    .getResource("fxml/InstructionPopup.fxml")));
             Stage insStage = new Stage();
             Stage appStage = (Stage) ((Node) event.getSource()).getScene().getWindow();
             insStage.initOwner(appStage);
@@ -439,7 +456,8 @@ public class Application {
     }
 
     /**
-     * Open (pop up) the edit word window for the currently looked up word (in the `webView`).
+     * Open (pop up) the edit word window for the currently looked up word (in the
+     * `webView`).
      *
      * @param event action event
      */
@@ -464,12 +482,11 @@ public class Application {
         }
         EditDefinition.setEditingWord(lastLookUpWord);
         try {
-            Parent root =
-                    FXMLLoader.load(
-                            Objects.requireNonNull(
-                                    getClass()
-                                            .getClassLoader()
-                                            .getResource("fxml/EditDefinition.fxml")));
+            Parent root = FXMLLoader.load(
+                    Objects.requireNonNull(
+                            getClass()
+                                    .getClassLoader()
+                                    .getResource("fxml/EditDefinition.fxml")));
             Stage appStage = (Stage) ((Node) event.getSource()).getScene().getWindow();
             Stage newStage = new Stage();
             Scene scene = new Scene(root);
@@ -485,7 +502,10 @@ public class Application {
         }
     }
 
-    /** Open (pop up) delete confirmation for the last looked up word (in the `webView`). */
+    /**
+     * Open (pop up) delete confirmation for the last looked up word (in the
+     * `webView`).
+     */
     @FXML
     public void deleteWord() {
         if (lastLookUpWord.isEmpty()) {
@@ -534,8 +554,7 @@ public class Application {
     @FXML
     public void addingWord(ActionEvent event) {
         try {
-            FXMLLoader loader =
-                    new FXMLLoader(getClass().getClassLoader().getResource("fxml/AddWord.fxml"));
+            FXMLLoader loader = new FXMLLoader(getClass().getClassLoader().getResource("fxml/AddWord.fxml"));
             Parent root = loader.load();
             AddWord controller = loader.getController();
             Stage addStage = new Stage();
@@ -558,11 +577,11 @@ public class Application {
         scene.getStylesheets()
                 .add(
                         Objects.requireNonNull(
-                                        getClass()
-                                                .getResource(
-                                                        (Application.isLightMode()
-                                                                ? "/css/General-light.css"
-                                                                : "/css/General-dark.css")))
+                                getClass()
+                                        .getResource(
+                                                (Application.isLightMode()
+                                                        ? "/css/General-light.css"
+                                                        : "/css/General-dark.css")))
                                 .toExternalForm());
     }
 

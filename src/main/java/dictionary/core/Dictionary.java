@@ -1,4 +1,4 @@
-package dictionary.server;
+package dictionary.core;
 
 import java.io.BufferedWriter;
 import java.io.FileOutputStream;
@@ -15,13 +15,16 @@ public abstract class Dictionary {
      * Initialize the dictionary when starting the application. (Only overridden by
      * DatabaseDictionary for making MYSQL connection)
      */
-    public void initialize() throws SQLException {}
+    public void initialize() throws SQLException {
+    }
 
     /**
-     * Close the dictionary when exiting the application. (Only overridden by DatabaseDictionary for
+     * Close the dictionary when exiting the application. (Only overridden by
+     * DatabaseDictionary for
      * close the MYSQL connection)
      */
-    public void close() {}
+    public void close() {
+    }
 
     /**
      * Get all words in the dictionary.
@@ -48,7 +51,7 @@ public abstract class Dictionary {
     /**
      * Insert a new word to dictionary.
      *
-     * @param target the word
+     * @param target     the word
      * @param definition the definition
      * @return true if `target` hasn't been added yet, false otherwise
      */
@@ -65,14 +68,15 @@ public abstract class Dictionary {
     /**
      * Update the Vietnamese definition of `target` to `definition`.
      *
-     * @param target the word
+     * @param target     the word
      * @param definition the new definition
      * @return true if successfully updated, false otherwise
      */
     public abstract boolean updateWordDefinition(final String target, final String definition);
 
     /**
-     * Export all words with every word and definition is on 1 line separated by a tab character.
+     * Export all words with every word and definition is on 1 line separated by a
+     * tab character.
      *
      * @return a string of exported words
      */
@@ -95,10 +99,9 @@ public abstract class Dictionary {
      * @throws IOException path not found
      */
     public void exportToFile(String exportPath) throws IOException {
-        Writer out =
-                new BufferedWriter(
-                        new OutputStreamWriter(
-                                new FileOutputStream(exportPath), StandardCharsets.UTF_8));
+        Writer out = new BufferedWriter(
+                new OutputStreamWriter(
+                        new FileOutputStream(exportPath), StandardCharsets.UTF_8));
         String export = exportAllWords();
         out.write(export);
         out.close();

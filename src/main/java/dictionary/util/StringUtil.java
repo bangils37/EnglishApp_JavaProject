@@ -1,4 +1,4 @@
-package dictionary.server;
+package dictionary.util;
 
 import java.io.BufferedReader;
 import java.io.FileReader;
@@ -10,7 +10,23 @@ import org.jsoup.nodes.Element;
 import org.jsoup.nodes.Node;
 import org.jsoup.nodes.TextNode;
 
-public class Helper {
+public class StringUtil {
+
+    /**
+     * Remove HTML tags from a string.
+     * 
+     * @param html string containing HTML tags
+     * @return string without HTML tags
+     */
+    public static String removeHtmlTags(String html) {
+        html = html.replace("<I>", "");
+        html = html.replace("</I>", "");
+        html = html.replace("<Q>", "");
+        html = html.replace("</Q>", "");
+        html = html.replace("<br />", "\n");
+
+        return html;
+    }
 
     /**
      * Creates a string of spaces that is 'spaces' spaces long.
@@ -28,7 +44,8 @@ public class Helper {
     /**
      * Creates a string of `-`` that is 'length' characters long.
      *
-     * @param length The number of `-` characters to add to the vertical separator line.
+     * @param length The number of `-` characters to add to the vertical separator
+     *               line.
      * @return the string of `length` characters `-`
      */
     public static String createLineSeparator(int length) {
@@ -41,7 +58,8 @@ public class Helper {
     /**
      * Convert HTML to plain text keeping line breaks, paragraph...
      *
-     * <p>Reference:
+     * <p>
+     * Reference:
      * https://stackoverflow.com/questions/2513707/how-to-convert-html-to-text-keeping-linebreaks
      *
      * @param html HTML String
@@ -57,8 +75,10 @@ public class Helper {
     /**
      * Build the plain text from Jsoup nodes.
      *
-     * <p>Reference: <a
-     * href="https://stackoverflow.com/questions/2513707/how-to-convert-html-to-text-keeping-linebreaks">...</a>
+     * <p>
+     * Reference: <a
+     * href=
+     * "https://stackoverflow.com/questions/2513707/how-to-convert-html-to-text-keeping-linebreaks">...</a>
      *
      * @param node Jsoup nodes
      * @return StringBuffer
@@ -86,6 +106,7 @@ public class Helper {
 
     /**
      * Count number of lines in the file `file`.
+     * 
      * @param file the path of the file
      * @return number of lines of the given file
      * @throws IOException file not found or couldn't read
@@ -93,7 +114,8 @@ public class Helper {
     public static int countNumLinesOfFile(String file) throws IOException {
         BufferedReader reader = new BufferedReader(new FileReader(file));
         int lines = 0;
-        while (reader.readLine() != null) lines++;
+        while (reader.readLine() != null)
+            lines++;
         reader.close();
         return lines;
     }

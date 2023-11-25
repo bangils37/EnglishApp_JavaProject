@@ -1,4 +1,4 @@
-package dictionary.server;
+package dictionary.core;
 
 import java.sql.Connection;
 import java.sql.DriverManager;
@@ -65,10 +65,6 @@ public class DatabaseDictionary extends Dictionary {
 
     /**
      * Connect to MYSQL database.
-     *
-     * <p>
-     * Reference:
-     * https://stackoverflow.com/questions/2839321/connect-java-to-a-mysql-database
      */
     private void connectToDatabase() throws SQLException {
         System.out.println("Connecting to database...");
@@ -85,7 +81,7 @@ public class DatabaseDictionary extends Dictionary {
         connectToDatabase();
         ArrayList<String> targets = getAllWordTargets();
         for (String word : targets) {
-            Trie.insert(word);
+            Trie.getInstance().insert(word);
         }
     }
 
@@ -152,7 +148,7 @@ public class DatabaseDictionary extends Dictionary {
             } finally {
                 close(ps);
             }
-            Trie.insert(target);
+            Trie.getInstance().insert(target);
             return true;
         } catch (SQLException e) {
             e.printStackTrace();
@@ -183,7 +179,7 @@ public class DatabaseDictionary extends Dictionary {
             } finally {
                 close(ps);
             }
-            Trie.delete(target);
+            Trie.getInstance().delete(target);
             return true;
         } catch (SQLException e) {
             e.printStackTrace();
