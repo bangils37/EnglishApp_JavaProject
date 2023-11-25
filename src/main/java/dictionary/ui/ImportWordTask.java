@@ -1,8 +1,9 @@
 package dictionary.ui;
 
 import dictionary.App;
-import dictionary.server.Helper;
 import dictionary.ui.controller.Application;
+import dictionary.util.StringUtil;
+
 import java.io.BufferedReader;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
@@ -25,19 +26,19 @@ public class ImportWordTask extends Task<Void> {
     }
 
     /**
-     * Import words to dictionary from `file`. Update the progress bar at the same time.
+     * Import words to dictionary from `file`. Update the progress bar at the same
+     * time.
      *
      * @return nothing
      */
     @Override
     protected Void call() {
         try {
-            BufferedReader in =
-                    new BufferedReader(
-                            new InputStreamReader(
-                                    new FileInputStream(file), StandardCharsets.UTF_8));
+            BufferedReader in = new BufferedReader(
+                    new InputStreamReader(
+                            new FileInputStream(file), StandardCharsets.UTF_8));
             String inputLine;
-            numWords = Helper.countNumLinesOfFile(file);
+            numWords = StringUtil.countNumLinesOfFile(file);
             int counter = 0;
             while ((inputLine = in.readLine()) != null) {
                 if (isCancelled()) {
@@ -77,20 +78,22 @@ public class ImportWordTask extends Task<Void> {
         return null;
     }
 
-    /** Popup a successful information box indicating the task has been successfully executed. */
+    /**
+     * Popup a successful information box indicating the task has been successfully
+     * executed.
+     */
     @Override
     protected void succeeded() {
         Alert alert = new Alert(AlertType.INFORMATION);
         setAlertCss(alert);
         alert.setTitle("Thông báo");
-        String content =
-                "Thành công thêm "
-                        + numWordsInserted
-                        + "/"
-                        + numWords
-                        + " từ vào từ điển.\nCó "
-                        + (numWords - numWordsInserted)
-                        + " từ không được thêm vào từ điển\n(bị gián đoạn, lỗi format hoặc từ đã tồn tại).";
+        String content = "Thành công thêm "
+                + numWordsInserted
+                + "/"
+                + numWords
+                + " từ vào từ điển.\nCó "
+                + (numWords - numWordsInserted)
+                + " từ không được thêm vào từ điển\n(bị gián đoạn, lỗi format hoặc từ đã tồn tại).";
         alert.setContentText(content);
         alert.show();
     }
@@ -101,15 +104,14 @@ public class ImportWordTask extends Task<Void> {
         Alert alert = new Alert(AlertType.WARNING);
         setAlertCss(alert);
         alert.setTitle("Thông báo");
-        String content =
-                "Quá trình nhập từ file bị gián đoạn.\n"
-                        + "Thành công thêm "
-                        + numWordsInserted
-                        + "/"
-                        + numWords
-                        + " từ vào từ điển.\nCó "
-                        + (numWords - numWordsInserted)
-                        + " từ không được thêm vào từ điển\n(bị gián đoạn, lỗi format hoặc từ đã tồn tại).";
+        String content = "Quá trình nhập từ file bị gián đoạn.\n"
+                + "Thành công thêm "
+                + numWordsInserted
+                + "/"
+                + numWords
+                + " từ vào từ điển.\nCó "
+                + (numWords - numWordsInserted)
+                + " từ không được thêm vào từ điển\n(bị gián đoạn, lỗi format hoặc từ đã tồn tại).";
         alert.setContentText(content);
         alert.show();
     }
@@ -120,15 +122,14 @@ public class ImportWordTask extends Task<Void> {
         Alert alert = new Alert(AlertType.ERROR);
         setAlertCss(alert);
         alert.setTitle("Lỗi");
-        String content =
-                "Quá trình nhập từ file gặp lỗi.\n"
-                        + "Thành công thêm "
-                        + numWordsInserted
-                        + "/"
-                        + numWords
-                        + " từ vào từ điển.\nCó "
-                        + (numWords - numWordsInserted)
-                        + " từ không được thêm vào từ điển\n(bị gián đoạn, lỗi format hoặc từ đã tồn tại).";
+        String content = "Quá trình nhập từ file gặp lỗi.\n"
+                + "Thành công thêm "
+                + numWordsInserted
+                + "/"
+                + numWords
+                + " từ vào từ điển.\nCó "
+                + (numWords - numWordsInserted)
+                + " từ không được thêm vào từ điển\n(bị gián đoạn, lỗi format hoặc từ đã tồn tại).";
         alert.setContentText(content);
         alert.show();
     }

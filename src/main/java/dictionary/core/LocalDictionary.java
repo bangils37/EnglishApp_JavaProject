@@ -1,4 +1,4 @@
-package dictionary.server;
+package dictionary.core;
 
 import java.util.ArrayList;
 
@@ -51,7 +51,7 @@ public class LocalDictionary extends Dictionary {
     /**
      * Insert a new word to dictionary.
      *
-     * @param target the word
+     * @param target     the word
      * @param definition the definition
      * @return true if `target` hasn't been added yet, false otherwise
      */
@@ -64,7 +64,7 @@ public class LocalDictionary extends Dictionary {
         }
         Word w = new Word(target, definition);
         words.add(w);
-        Trie.insert(target);
+        Trie.getInstance().insert(target);
         return true;
     }
 
@@ -79,7 +79,7 @@ public class LocalDictionary extends Dictionary {
         for (int i = 0; i < words.size(); ++i) {
             if (words.get(i).getWordTarget().equals(target)) {
                 words.remove(i);
-                Trie.delete(target);
+                Trie.getInstance().delete(target);
                 return true;
             }
         }
@@ -89,7 +89,7 @@ public class LocalDictionary extends Dictionary {
     /**
      * Update the Vietnamese definition of `target` to `definition`.
      *
-     * @param target the word
+     * @param target     the word
      * @param definition the new definition
      * @return true if successfully updated, false otherwise
      */

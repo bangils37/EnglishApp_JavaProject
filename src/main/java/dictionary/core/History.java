@@ -1,4 +1,4 @@
-package dictionary.server;
+package dictionary.core;
 
 import java.io.BufferedReader;
 import java.io.File;
@@ -15,9 +15,22 @@ public class History {
     private static final int MAX_WORDS_HISTORY = 30;
     private static final String HISTORY_DIRECTORY_PATH = "dictionary-user-data/";
     private static final String HISTORY_FILE_PATH = HISTORY_DIRECTORY_PATH + "words-search-history.txt";
-    private static final ArrayList<String> historySearch = new ArrayList<>();
+    private final ArrayList<String> historySearch = new ArrayList<>();
 
-    public static ArrayList<String> getHistorySearch() {
+    private static History instance = null;
+
+    private History() {
+        loadHistory();
+    }
+
+    public static History getInstance() {
+        if (instance == null) {
+            instance = new History();
+        }
+        return instance;
+    }
+
+    public ArrayList<String> getHistorySearch() {
         return historySearch;
     }
 
@@ -26,7 +39,7 @@ public class History {
      * 
      * @see #historySearch
      */
-    public static void loadHistory() {
+    public void loadHistory() {
         File directory = new File(HISTORY_DIRECTORY_PATH);
         FileUtil.createDirectoryIfNotExists(directory);
 
@@ -42,7 +55,7 @@ public class History {
      * 
      * @param filePath path to the file
      */
-    private static void loadHistoryFromFile(String filePath) {
+    private void loadHistoryFromFile(String filePath) {
         try (BufferedReader reader = new BufferedReader(
                 new InputStreamReader(
                         new FileInputStream(filePath),
@@ -61,11 +74,11 @@ public class History {
     }
 
     /**
-     * Add a word to the search history.
+     * Add a word to the search History.getInstance().
      * 
      * @param target the word to be added
      */
-    public static void addWordToHistory(String target) {
+    public void addWordToHistory(String target) {
         historySearch.removeIf(e -> e.equals(target));
         historySearch.add(target);
         refactorHistory();
@@ -74,7 +87,7 @@ public class History {
     /**
      * Export serach history to saved file.
      */
-    public static void exportHistory() {
+    public void exportHistory() {
         StringBuilder content = new StringBuilder();
 
         for (String target : historySearch) {
@@ -87,7 +100,7 @@ public class History {
     /**
      * Refactor search history to limit the number of words.
      */
-    public static void refactorHistory() {
+    private void refactorHistory() {
         if (historySearch.size() > MAX_WORDS_HISTORY) {
             historySearch.subList(0, historySearch.size() - MAX_WORDS_HISTORY).clear();
         }

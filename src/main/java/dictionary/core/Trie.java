@@ -1,15 +1,35 @@
-package dictionary.server;
+package dictionary.core;
 
 import java.util.ArrayList;
 import java.util.Map;
 import java.util.TreeMap;
 
+/**
+ * Design pattern: Singleton
+ */
 public class Trie {
 
-    private static final ArrayList<String> searchedWords = new ArrayList<>();
-    private static final TrieNode root = new TrieNode();
+    private static Trie instance = null;
 
-    public static ArrayList<String> getSearchedWords() {
+    private final ArrayList<String> searchedWords = new ArrayList<>();
+    private final TrieNode root = new TrieNode();
+
+    private Trie() {
+    }
+
+    /**
+     * Get the instance of Trie DS.
+     *
+     * @return the instance of Trie DS
+     */
+    public static Trie getInstance() {
+        if (instance == null) {
+            instance = new Trie();
+        }
+        return instance;
+    }
+
+    public ArrayList<String> getSearchedWords() {
         return searchedWords;
     }
 
@@ -18,7 +38,7 @@ public class Trie {
      *
      * @param target the word to insert
      */
-    public static void insert(String target) {
+    public void insert(String target) {
         int length = target.length();
 
         TrieNode pCrawl = root;
@@ -43,7 +63,7 @@ public class Trie {
      * @param pCrawl the current node
      * @param target the current word that `pCrawl` represents
      */
-    private static void dfsGetWordsSubtree(TrieNode pCrawl, String target) {
+    private void dfsGetWordsSubtree(TrieNode pCrawl, String target) {
         if (pCrawl.isEndOfWord) {
             searchedWords.add(target);
         }
@@ -60,7 +80,7 @@ public class Trie {
      * @param prefix the prefix to search
      * @return an ArrayList of String contains the words start with `prefix`
      */
-    public static ArrayList<String> search(String prefix) {
+    public ArrayList<String> search(String prefix) {
         if (prefix.isEmpty()) {
             return new ArrayList<>();
         }
@@ -86,7 +106,7 @@ public class Trie {
      *
      * @param target the word to delete
      */
-    public static void delete(String target) {
+    public void delete(String target) {
         int length = target.length();
 
         TrieNode pCrawl = root;

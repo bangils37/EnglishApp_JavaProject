@@ -1,4 +1,4 @@
-package dictionary.server;
+package dictionary.core;
 
 import java.sql.Connection;
 import java.sql.DriverManager;
@@ -81,7 +81,7 @@ public class DatabaseDictionary extends Dictionary {
         connectToDatabase();
         ArrayList<String> targets = getAllWordTargets();
         for (String word : targets) {
-            Trie.insert(word);
+            Trie.getInstance().insert(word);
         }
     }
 
@@ -148,7 +148,7 @@ public class DatabaseDictionary extends Dictionary {
             } finally {
                 close(ps);
             }
-            Trie.insert(target);
+            Trie.getInstance().insert(target);
             return true;
         } catch (SQLException e) {
             e.printStackTrace();
@@ -179,7 +179,7 @@ public class DatabaseDictionary extends Dictionary {
             } finally {
                 close(ps);
             }
-            Trie.delete(target);
+            Trie.getInstance().delete(target);
             return true;
         } catch (SQLException e) {
             e.printStackTrace();

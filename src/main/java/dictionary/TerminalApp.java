@@ -1,6 +1,10 @@
 package dictionary;
 
+import java.io.BufferedInputStream;
+import java.io.FileOutputStream;
 import java.io.IOException;
+import java.net.HttpURLConnection;
+import java.net.URL;
 import java.sql.SQLException;
 import java.util.Arrays;
 import java.util.List;
@@ -27,9 +31,9 @@ import com.googlecode.lanterna.screen.TerminalScreen;
 import com.googlecode.lanterna.terminal.DefaultTerminalFactory;
 import com.googlecode.lanterna.terminal.Terminal;
 
-import dictionary.server.DatabaseDictionary;
-import dictionary.server.Dictionary;
-import dictionary.server.Trie;
+import dictionary.core.DatabaseDictionary;
+import dictionary.core.Dictionary;
+import dictionary.core.Trie;
 import dictionary.util.StringUtil;
 import javafx.scene.text.Text;
 
@@ -347,7 +351,7 @@ public class TerminalApp {
                 return;
             }
 
-            List<String> results = Trie.search(searchText);
+            List<String> results = Trie.getInstance().search(searchText);
             handleSearchResults(searchText, results);
         });
     }
