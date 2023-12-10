@@ -1,3 +1,138 @@
+@font-face {
+    src: url('PaytoneOne-Regular.ttf');
+}
+
+* {
+    -fx-text-fill: #000000;
+    -fx-font-family: "Paytone One";
+}
+
+#anchorPane {
+    -fx-background-color: #27C6E6;
+}
+
+#task_bar {
+    -fx-background-color: #0F52BB;
+}
+
+.list-cell:odd {
+    -fx-background-color: #D2F6F7;
+    -fx-font-size: 14px;
+}
+
+.list-cell:even {
+    -fx-background-color: #D2F6F7;
+    -fx-font-size: 14px;
+}
+
+.list-cell:focused {
+    -fx-background-color: #D2F6F7;
+    -fx-font-size: 14px;
+}
+
+.list-view {
+    -fx-background-color: #D2F6F7;
+    -fx-font-size: 14px;
+}
+
+.list-view:focused {
+    -fx-border-color: #D2F6F7;
+    -fx-font-size: 14px;
+}
+
+.text-field {
+    -fx-background-color: #D2F6F7;
+    -fx-background-radius: 30;
+}
+.text-field:focused {
+    -fx-border-color: #D2F6F7;
+    -fx-border-width: 2px;
+    -fx-border-radius: 30;
+}
+
+.button {
+    -fx-background-color: #439AE6;
+    -fx-text-fill: #ffffff;
+    -fx-background-radius: 30;
+}
+
+.button:hover {
+    -fx-background-color: #0081FF;
+}
+
+.button:focused {
+}
+
+#googleButton{
+    -fx-background-radius: 30 0 0 30;
+}
+
+#addWordButton{
+    -fx-background-radius: 30 0 0 30;
+}
+
+#exportButton{
+    -fx-background-radius: 30 0 0 30;
+}
+
+#showInstructionButton{
+    -fx-background-radius: 30 0 0 30;
+}
+
+#showInformationButton{
+    -fx-background-radius: 30 0 0 30;
+}
+
+#google_iconButton{
+    -fx-background-color: #0F52BB;
+}
+
+#addWord_iconButton{
+    -fx-background-color: #0F52BB;
+}
+
+#export_iconButton{
+    -fx-background-color: #0F52BB;
+}
+
+#showInstruction_iconButton{
+    -fx-background-color: #0F52BB;
+}
+
+#showInformation_iconButton{
+    -fx-background-color: #0F52BB;
+}
+
+#searchButton{
+    -fx-background-color: #27C6E6;
+}
+
 #modeToggle {
-  -fx-background-color: #f4f4f4;
+    -fx-background-color: #439AE6;
+    -fx-background-radius: 30 0 0 30;
+}
+
+#modeToggle:hover {
+    -fx-background-color: #0081FF;
+}
+
+#modeToggle:focused {
+}
+
+#modeToggle_icon{
+    -fx-background-color: #FFFFFF;
+}
+
+.scroll-bar:vertical {
+    -fx-background-color: #16161f;
+}
+
+.scroll-bar:vertical .thumb {
+     -fx-background-color: derive(#262837, 60.0%);
+     -fx-background-radius: 2.0em;
+}
+
+.scroll-bar:vertical .thumb:hover {
+     -fx-background-color: derive(#262837, 10.0%);
+     -fx-background-radius: 2.0em;
 }

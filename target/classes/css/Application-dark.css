@@ -1,61 +1,138 @@
+@font-face {
+    src: url('PaytoneOne-Regular.ttf');
+}
+
 * {
-  -fx-text-fill: #babccf;
+    -fx-text-fill: #babccf;
+    -fx-font-family: "Paytone One";
 }
 
-#anchorPane, #modeToggle {
-  -fx-background-color: #16161f;
+#anchorPane {
+    -fx-background-color: #080B35;
 }
 
-.list-view .list-cell:odd {
-  -fx-background-color: #1f202f;
+#task_bar {
+    -fx-background-color: #04031C;
 }
 
-.button, .list-view, .text-field, .list-cell:even {
-  -fx-background-color: #262837;
+.list-cell:odd {
+    -fx-background-color: #152A5D;
+    -fx-font-size: 14px;
 }
 
-.text-field:focused {
-  -fx-border-color: #5478ba;
-  -fx-border-width: 2px;
-}
-
-.list-view:focused {
-  -fx-border-color: #5478ba;
+.list-cell:even {
+    -fx-background-color: #1D3C69;
+    -fx-font-size: 14px;
 }
 
 .list-cell:focused {
-  -fx-text-fill: #5478ba;
+    -fx-background-color: #1D3C69;
+    -fx-font-size: 14px;
+}
+
+.list-view {
+    -fx-background-color: #1D3C69;
+    -fx-font-size: 14px;
+}
+
+.list-view:focused {
+    -fx-border-color: #1D3C69;
+    -fx-font-size: 14px;
+}
+
+.text-field {
+    -fx-background-color: #1D3C69;
+    -fx-background-radius: 30;
+}
+.text-field:focused {
+    -fx-border-color: #1D3C69;
+    -fx-border-width: 2px;
+    -fx-border-radius: 30;
+}
+
+.button {
+    -fx-background-color: #152A5D;
+    -fx-text-fill: #ffffff;
+    -fx-background-radius: 30;
 }
 
 .button:hover {
-  -fx-background-color: #525874;
+    -fx-background-color: #525874;
 }
 
 .button:focused {
-  -fx-border-color: #5478ba;
-  -fx-border-width: 2px;
+}
+
+#googleButton{
+    -fx-background-radius: 30 0 0 30;
+}
+
+#addWordButton{
+    -fx-background-radius: 30 0 0 30;
+}
+
+#exportButton{
+    -fx-background-radius: 30 0 0 30;
+}
+
+#showInstructionButton{
+    -fx-background-radius: 30 0 0 30;
+}
+
+#showInformationButton{
+    -fx-background-radius: 30 0 0 30;
+}
+
+#google_iconButton{
+    -fx-background-color: #04031C;
+}
+
+#addWord_iconButton{
+    -fx-background-color: #04031C;
+}
+
+#export_iconButton{
+    -fx-background-color: #04031C;
+}
+
+#showInstruction_iconButton{
+    -fx-background-color: #04031C;
+}
+
+#showInformation_iconButton{
+    -fx-background-color: #04031C;
+}
+
+#searchButton{
+    -fx-background-color: #080B35;
 }
 
 #modeToggle {
-  -fx-background-color: #16161f;
+    -fx-background-color: #152A5D;
+    -fx-background-radius: 30 0 0 30;
+}
+
+#modeToggle:hover {
+    -fx-background-color: #525874;
 }
 
 #modeToggle:focused {
-  -fx-background-color: #16161f;
-  -fx-border-color: none;
+}
+
+#modeToggle_icon{
+    -fx-background-color: #000000;
 }
 
 .scroll-bar:vertical {
-  -fx-background-color: #16161f;
-
+    -fx-background-color: #16161f;
 }
 
 .scroll-bar:vertical .thumb {
-  -fx-background-color: derive(#262837, 60.0%);
-  -fx-background-radius: 2.0em;
+     -fx-background-color: derive(#262837, 60.0%);
+     -fx-background-radius: 2.0em;
 }
 
 .scroll-bar:vertical .thumb:hover {
-  -fx-background-color: derive(#262837, 10.0%);
-  -fx-background-radius: 2.0em;
+     -fx-background-color: derive(#262837, 10.0%);
+     -fx-background-radius: 2.0em;
 }
