@@ -2,11 +2,9 @@ package dictionary.ui.controller;
 
 import static dictionary.App.dictionary;
 
-import dictionary.core.History;
-import dictionary.core.Trie;
-import dictionary.translate.SpeakerStrategy;
-import dictionary.translate.strategy.EnSpeakerStrategy;
-
+import dictionary.server.History;
+import dictionary.server.TextToSpeech;
+import dictionary.server.Trie;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.util.ArrayList;
@@ -42,35 +40,22 @@ import javafx.util.Callback;
 public class Application {
     public static boolean lightMode = true;
     private String lastLookUpWord = "";
-    @FXML
-    private TextField inputText;
-    @FXML
-    private ListView<String> searchList;
-    @FXML
-    private WebView webView;
+    @FXML private TextField inputText;
+    @FXML private ListView<String> searchList;
+    @FXML private WebView webView;
     private int lastIndex = 0;
     private Image historyIcon;
-    @FXML
-    private Button addWordButton;
-    @FXML
-    private Button showInformationButton;
-    @FXML
-    private Button showInstructionButton;
-    @FXML
-    private Button exportButton;
-    @FXML
-    private Button pronounceButton;
-    @FXML
-    private Button editButton;
-    @FXML
-    private Button deleteButton;
-    @FXML
-    private Button googleButton;
-    @FXML
-    private Button modeToggle;
+    @FXML private Button addWordButton;
+    @FXML private Button showInformationButton;
+    @FXML private Button showInstructionButton;
+    @FXML private Button exportButton;
+    @FXML private Button pronounceButton;
+    @FXML private Button editButton;
+    @FXML private Button deleteButton;
+    @FXML private Button googleButton;
+    @FXML private Button modeToggle;
 
-    public Application() {
-    }
+    public Application() {}
 
     public static boolean isLightMode() {
         return lightMode;
@@ -81,12 +66,12 @@ public class Application {
     }
 
     /**
-     * Focus on the inputText TextField when first open. Prepare the search list
-     * after that.
+     * Tập trung vào ô nhập văn bản `inputText` khi mở ứng dụng. Chuẩn bị danh sách tìm kiếm sau đó.
      */
     @FXML
     private void initialize() {
         Platform.runLater(() -> inputText.requestFocus());
+        prepareWebView();
         prepareHistoryIcon(isLightMode());
         prepareButtonIcon(isLightMode());
         prepareSearchList();
@@ -106,7 +91,7 @@ public class Application {
             } else {
                 webView.getEngine()
                         .loadContent(
-                                "<html><body bgcolor='#262837' style='color:#babccf'></body></html>",
+                                "<html><body bgcolor='#1D3C69' style='color:#babccf'></body></html>",
                                 "text/html");
             }
         } else {
@@ -118,65 +103,80 @@ public class Application {
             if (!lastLookUpWord.isEmpty()) {
                 lookUpWord();
             } else {
-                webView.getEngine().loadContent("", "text/html");
+                webView.getEngine().loadContent(
+                        "<html><body bgcolor='#D2F6F7' style='color:#000000'></body></html>",
+                        "text/html");
             }
         }
         prepareSearchList();
     }
 
-    /**
-     * Prepare the icons of all the buttons based on the given `mode` (dark mode is
-     * 0 and light mode
-     * is 1).
-     *
-     * @param mode light mode or dark mode icons
-     */
-    public void prepareButtonIcon(boolean mode) {
-        String suffix = (mode ? "light" : "dark");
-        ImageView addIcon = new ImageView("icon/add-icon-" + suffix + ".png");
-        addIcon.setFitHeight(18);
-        addIcon.setFitWidth(18);
-        ImageView infoIcon = new ImageView("icon/info-icon-" + suffix + ".png");
-        infoIcon.setFitHeight(18);
-        infoIcon.setFitWidth(18);
-        ImageView helpIcon = new ImageView("icon/help-icon-" + suffix + ".png");
-        helpIcon.setFitHeight(18);
-        helpIcon.setFitWidth(18);
-        ImageView exportIcon = new ImageView("icon/export-icon-" + suffix + ".png");
-        exportIcon.setFitHeight(18);
-        exportIcon.setFitWidth(18);
-        ImageView pronounceIcon = new ImageView("icon/pronounce-icon-" + suffix + ".png");
-        pronounceIcon.setFitHeight(18);
-        pronounceIcon.setFitWidth(18);
-        ImageView editIcon = new ImageView("icon/edit-icon-" + suffix + ".png");
-        editIcon.setFitHeight(18);
-        editIcon.setFitWidth(18);
-        ImageView deleteIcon = new ImageView("icon/delete-icon-" + suffix + ".png");
-        deleteIcon.setFitHeight(18);
-        deleteIcon.setFitWidth(18);
-        ImageView googleIcon = new ImageView("icon/google-icon-" + suffix + ".png");
-        googleIcon.setFitHeight(18);
-        googleIcon.setFitWidth(18);
-        ImageView modeIcon = new ImageView("icon/mode-icon-" + suffix + ".png");
-        modeIcon.setFitHeight(30);
-        modeIcon.setFitWidth(30);
-
-        addWordButton.setGraphic(addIcon);
-        showInformationButton.setGraphic(infoIcon);
-        showInstructionButton.setGraphic(helpIcon);
-        exportButton.setGraphic(exportIcon);
-        pronounceButton.setGraphic(pronounceIcon);
-        editButton.setGraphic(editIcon);
-        deleteButton.setGraphic(deleteIcon);
-        googleButton.setGraphic(googleIcon);
-        modeToggle.setGraphic(modeIcon);
+    public void prepareWebView() {
+        if (!isLightMode()) {
+            webView.getEngine()
+                    .loadContent(
+                            "<html><body bgcolor='#1D3C69' style='color:#babccf'></body></html>",
+                            "text/html");
+        } else {
+            webView.getEngine()
+                    .loadContent(
+                            "<html><body bgcolor='#D2F6F7' style='color:#000000'></body></html>",
+                            "text/html");
+        }
     }
 
     /**
-     * Move to the search list by pressing DOWN arrow key when at the `inputText`
+     * Chuẩn bị biểu tượng của tất cả các nút dựa trên chế độ cung cấp (chế độ tối là 0 và chế độ
+     * sáng là 1).
+     *
+     * @param mode biểu tượng chế độ sáng hoặc tối
+     */
+    public void prepareButtonIcon(boolean mode) {
+//        String suffix = (mode ? "light" : "dark");
+//        ImageView addIcon = new ImageView("icon/add-icon-" + suffix + ".png");
+//        addIcon.setFitHeight(18);
+//        addIcon.setFitWidth(18);
+//        ImageView infoIcon = new ImageView("icon/info-icon-" + suffix + ".png");
+//        infoIcon.setFitHeight(18);
+//        infoIcon.setFitWidth(18);
+//        ImageView helpIcon = new ImageView("icon/help-icon-" + suffix + ".png");
+//        helpIcon.setFitHeight(18);
+//        helpIcon.setFitWidth(18);
+//        ImageView exportIcon = new ImageView("icon/export-icon-" + suffix + ".png");
+//        exportIcon.setFitHeight(18);
+//        exportIcon.setFitWidth(18);
+//        ImageView pronounceIcon = new ImageView("icon/pronounce-icon-" + suffix + ".png");
+//        pronounceIcon.setFitHeight(18);
+//        pronounceIcon.setFitWidth(18);
+//        ImageView editIcon = new ImageView("icon/edit-icon-" + suffix + ".png");
+//        editIcon.setFitHeight(18);
+//        editIcon.setFitWidth(18);
+//        ImageView deleteIcon = new ImageView("icon/delete-icon-" + suffix + ".png");
+//        deleteIcon.setFitHeight(18);
+//        deleteIcon.setFitWidth(18);
+//        ImageView googleIcon = new ImageView("icon/google-icon-" + suffix + ".png");
+//        googleIcon.setFitHeight(18);
+//        googleIcon.setFitWidth(18);
+//        ImageView modeIcon = new ImageView("icon/mode-icon-" + suffix + ".png");
+//        modeIcon.setFitHeight(30);
+//        modeIcon.setFitWidth(30);
+//
+//        addWordButton.setGraphic(addIcon);
+//        showInformationButton.setGraphic(infoIcon);
+//        showInstructionButton.setGraphic(helpIcon);
+//        exportButton.setGraphic(exportIcon);
+//        pronounceButton.setGraphic(pronounceIcon);
+//        editButton.setGraphic(editIcon);
+//        deleteButton.setGraphic(deleteIcon);
+//        googleButton.setGraphic(googleIcon);
+//        modeToggle.setGraphic(modeIcon);
+    }
+
+    /**
+     * Di chuyển đến danh sách tìm kiếm bằng cách nhấn phím mũi tên XUỐNG khi ở `inputText`
      * TextField.
      *
-     * @param event action event
+     * @param event sự kiện hành động
      */
     @FXML
     public void changeFocusDown(KeyEvent event) {
@@ -188,14 +188,15 @@ public class Application {
         }
     }
 
-    /** Load the history icon into its corresponding icon image. */
+    /** Tải biểu tượng lịch sử vào biểu tượng hình ảnh tương ứng. */
     private void prepareHistoryIcon(boolean mode) {
         try {
-            historyIcon = new Image(
-                    new FileInputStream(
-                            "src/main/resources/icon/history-icon-"
-                                    + (mode ? "light" : "dark")
-                                    + ".png"));
+            historyIcon =
+                    new Image(
+                            new FileInputStream(
+                                    "src/main/resources/icon/history-icon-"
+                                            + (mode ? "light" : "dark")
+                                            + ".png"));
 
         } catch (IOException e) {
             e.printStackTrace();
@@ -203,15 +204,14 @@ public class Application {
     }
 
     /**
-     * Prepare the search lists having the text in `inputText` as prefix. Words in
-     * the history base
-     * appears first in the list, and they begin with a "history" icon.
+     * Chuẩn bị danh sách tìm kiếm có văn bản trong `inputText` là tiền tố. Các từ trong lịch sử
+     * xuất hiện đầu tiên trong danh sách và chúng bắt đầu bằng một biểu tượng "lịch sử".
      */
     public void prepareSearchList() {
         searchList.getItems().clear();
         String target = inputText.getText();
-        ArrayList<String> searchedWords = Trie.getInstance().search(target);
-        ArrayList<String> allHistory = History.getInstance().getHistorySearch();
+        ArrayList<String> searchedWords = Trie.search(target);
+        ArrayList<String> allHistory = History.getHistorySearch();
         for (int i = allHistory.size() - 1; i >= 0; i--) {
             if (target.isEmpty() || allHistory.get(i).startsWith(target)) {
                 searchList.getItems().add("#" + allHistory.get(i));
@@ -228,7 +228,7 @@ public class Application {
                             @Override
                             public void updateItem(String item, boolean empty) {
                                 super.updateItem(item, empty);
-                                if (empty || item == null) {
+                                 if (empty || item == null) {
                                     setGraphic(null);
                                     setText(null);
                                 } else if (item.charAt(0) != '#') {
@@ -249,7 +249,7 @@ public class Application {
                 });
     }
 
-    /** Look up the word in the dictionary and show its definition in `webView`. */
+    /** Tra cứu từ trong từ điển và hiển thị định nghĩa của nó trong `webView`. */
     @FXML
     public void lookUpWord() {
         String target = inputText.getText();
@@ -257,7 +257,7 @@ public class Application {
             target = target.substring(1);
         }
         if (!target.isEmpty()) {
-            History.getInstance().addWordToHistory(target);
+            History.addWordToHistory(target);
         }
 
         String definition = dictionary.lookUpWord(target);
@@ -270,26 +270,35 @@ public class Application {
             if (!Application.isLightMode()) {
                 webView.getEngine()
                         .loadContent(
-                                "<html><body bgcolor='#262837' style='color:#babccf'></body></html>",
+                                "<html><body bgcolor='#1D3C69' style='color:#babccf'></body></html>",
                                 "text/html");
             } else {
-                webView.getEngine().loadContent("", "text/html");
-            }
+                webView.getEngine()
+                        .loadContent(
+                                "<html><body bgcolor='#D2F6F7' style='color:#000000'></body></html>",
+                                "text/html");            }
         } else {
             lastLookUpWord = target;
             if (!Application.isLightMode()) {
-                definition = "<html><body bgcolor='#262837' style='color:#babccf'>"
-                        + definition
-                        + "</body></html>";
+                definition =
+                        "<html><body bgcolor='#1D3C69' style='color:#babccf'>"
+                                + definition
+                                + "</body></html>";
+            }
+            else {
+                definition =
+                        "<html><body bgcolor='#D2F6F7' style='color:#000000'>"
+                                + definition
+                                + "</body></html>";
             }
             webView.getEngine().loadContent(definition, "text/html");
         }
     }
 
     /**
-     * Look up word when pressing Enter at the selected word from the search list
+     * Tra cứu từ khi nhấn Enter tại từ đã chọn từ danh sách tìm kiếm
      *
-     * @param e key event
+     * @param e sự kiện phím
      */
     @FXML
     public void selectWord(KeyEvent e) {
@@ -313,12 +322,11 @@ public class Application {
     }
 
     /**
-     * Double-click a word in the search list to look up its definition.
+     * Nhấp đôi vào một từ trong danh sách tìm kiếm để tra cứu định nghĩa của nó.
      *
-     * <p>
-     * The double-clicked word will be added to the history though.
+     * <p>Từ đã nhấp đôi sẽ được thêm vào lịch sử.
      *
-     * @param mouseEvent mouse event
+     * @param mouseEvent sự kiện chuột
      */
     @FXML
     public void selectWordDoubleClick(MouseEvent mouseEvent) {
@@ -334,27 +342,28 @@ public class Application {
     }
 
     /**
-     * Change scene to sentences translating (Google Translate).
+     * Chuyển đổi sang cảnh dịch câu (Google Translate).
      *
-     * @param event action event
+     * @param event sự kiện hành động
      */
     @FXML
     public void changeToSentencesTranslating(ActionEvent event) {
         try {
-            Parent root = FXMLLoader.load(
-                    Objects.requireNonNull(
-                            getClass()
-                                    .getClassLoader()
-                                    .getResource("fxml/SentencesTranslating.fxml")));
+            Parent root =
+                    FXMLLoader.load(
+                            Objects.requireNonNull(
+                                    getClass()
+                                            .getClassLoader()
+                                            .getResource("fxml/SentencesTranslating.fxml")));
             Stage appStage = (Stage) ((Node) event.getSource()).getScene().getWindow();
             Scene scene = new Scene(root);
             if (!Application.isLightMode()) {
                 scene.getStylesheets()
                         .add(
                                 Objects.requireNonNull(
-                                        getClass()
-                                                .getResource(
-                                                        "/css/SentencesTranslating-dark.css"))
+                                                getClass()
+                                                        .getResource(
+                                                                "/css/SentencesTranslating-dark.css"))
                                         .toExternalForm());
             }
             appStage.setTitle("Sentences Translator");
@@ -365,28 +374,28 @@ public class Application {
         }
     }
 
-    /** Pronounce the English word that is currently showed in the `webView`. */
+    /** Phát âm từ tiếng Anh đang hiển thị trong `webView`. */
     @FXML
     public void playSound() {
         if (!lastLookUpWord.isEmpty()) {
-            SpeakerStrategy speakerStrategy = new EnSpeakerStrategy();
-            speakerStrategy.speak(lastLookUpWord);
+            TextToSpeech.playSoundGoogleTranslateEnToVi(lastLookUpWord);
         }
     }
 
     /**
-     * Open (pop up) export to file window for words export to file utility.
+     * Mở cửa sổ xuất dữ liệu từ điển để xuất từ điển ra tệp.
      *
      * @param event action event
      */
     @FXML
     public void exportToFile(ActionEvent event) {
         try {
-            Parent root = FXMLLoader.load(
-                    Objects.requireNonNull(
-                            getClass()
-                                    .getClassLoader()
-                                    .getResource("fxml/ExportToFile.fxml")));
+            Parent root =
+                    FXMLLoader.load(
+                            Objects.requireNonNull(
+                                    getClass()
+                                            .getClassLoader()
+                                            .getResource("fxml/ExportToFile.fxml")));
             Stage appStage = (Stage) ((Node) event.getSource()).getScene().getWindow();
             Stage newStage = new Stage();
             Scene scene = new Scene(root);
@@ -403,17 +412,18 @@ public class Application {
     }
 
     /**
-     * Open (pop up) information details of the application.
+     * Mở cửa sổ hiển thị thông tin về ứng dụng.
      *
      * @param event action event
      */
     public void showInformation(ActionEvent event) {
         try {
-            Parent root = FXMLLoader.load(
-                    Objects.requireNonNull(
-                            getClass()
-                                    .getClassLoader()
-                                    .getResource("")));
+            Parent root =
+                    FXMLLoader.load(
+                            Objects.requireNonNull(
+                                    getClass()
+                                            .getClassLoader()
+                                            .getResource("fxml/InformationPopup.fxml")));
             Stage infStage = new Stage();
             Stage appStage = (Stage) ((Node) event.getSource()).getScene().getWindow();
             infStage.initOwner(appStage);
@@ -429,18 +439,19 @@ public class Application {
     }
 
     /**
-     * Open (pop up) the application instruction.
+     * Mở cửa sổ hiển thị hướng dẫn sử dụng ứng dụng.
      *
      * @param event action event
      */
     @FXML
     public void showInstruction(ActionEvent event) {
         try {
-            Parent root = FXMLLoader.load(
-                    Objects.requireNonNull(
-                            getClass()
-                                    .getClassLoader()
-                                    .getResource("fxml/InstructionPopup.fxml")));
+            Parent root =
+                    FXMLLoader.load(
+                            Objects.requireNonNull(
+                                    getClass()
+                                            .getClassLoader()
+                                            .getResource("fxml/InstructionPopup.fxml")));
             Stage insStage = new Stage();
             Stage appStage = (Stage) ((Node) event.getSource()).getScene().getWindow();
             insStage.initOwner(appStage);
@@ -456,8 +467,7 @@ public class Application {
     }
 
     /**
-     * Open (pop up) the edit word window for the currently looked up word (in the
-     * `webView`).
+     * Mở cửa sổ chỉnh sửa từ cho từ hiện tại đang được tìm kiếm (ở `webView`).
      *
      * @param event action event
      */
@@ -482,11 +492,12 @@ public class Application {
         }
         EditDefinition.setEditingWord(lastLookUpWord);
         try {
-            Parent root = FXMLLoader.load(
-                    Objects.requireNonNull(
-                            getClass()
-                                    .getClassLoader()
-                                    .getResource("fxml/EditDefinition.fxml")));
+            Parent root =
+                    FXMLLoader.load(
+                            Objects.requireNonNull(
+                                    getClass()
+                                            .getClassLoader()
+                                            .getResource("fxml/EditDefinition.fxml")));
             Stage appStage = (Stage) ((Node) event.getSource()).getScene().getWindow();
             Stage newStage = new Stage();
             Scene scene = new Scene(root);
@@ -502,10 +513,7 @@ public class Application {
         }
     }
 
-    /**
-     * Open (pop up) delete confirmation for the last looked up word (in the
-     * `webView`).
-     */
+    /** Mở cửa sổ xác nhận xóa cho từ vừa tìm kiếm (ở `webView`). */
     @FXML
     public void deleteWord() {
         if (lastLookUpWord.isEmpty()) {
@@ -547,14 +555,15 @@ public class Application {
     }
 
     /**
-     * Open (pop up) the add word window for adding new words to the dictionary.
+     * Mở cửa sổ thêm từ để thêm từ mới vào từ điển.
      *
      * @param event action event
      */
     @FXML
     public void addingWord(ActionEvent event) {
         try {
-            FXMLLoader loader = new FXMLLoader(getClass().getClassLoader().getResource("fxml/AddWord.fxml"));
+            FXMLLoader loader =
+                    new FXMLLoader(getClass().getClassLoader().getResource("fxml/AddWord.fxml"));
             Parent root = loader.load();
             AddWord controller = loader.getController();
             Stage addStage = new Stage();
@@ -577,18 +586,18 @@ public class Application {
         scene.getStylesheets()
                 .add(
                         Objects.requireNonNull(
-                                getClass()
-                                        .getResource(
-                                                (Application.isLightMode()
-                                                        ? "/css/General-light.css"
-                                                        : "/css/General-dark.css")))
-                                .toExternalForm());
+                                        getClass()
+                                                .getResource(
+                                                        (Application.isLightMode()
+                                                                ? "/css/General-light.css"
+                                                                : "/css/General-dark.css")))
+                                .toExternalForm()); 
     }
 
     /**
-     * Set CSS for alert box in case of dark mode.
+     * Thiết lập CSS cho hộp thoại cảnh báo trong trường hợp chế độ tối.
      *
-     * @param alert alert
+     * @param alert cảnh báo
      */
     private void setAlertCss(Alert alert) {
         if (!Application.isLightMode()) {
