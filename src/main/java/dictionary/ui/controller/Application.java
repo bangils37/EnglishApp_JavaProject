@@ -87,6 +87,7 @@ public class Application {
     @FXML
     private void initialize() {
         Platform.runLater(() -> inputText.requestFocus());
+        prepareWebView();
         prepareHistoryIcon(isLightMode());
         prepareButtonIcon(isLightMode());
         prepareSearchList();
@@ -106,7 +107,7 @@ public class Application {
             } else {
                 webView.getEngine()
                         .loadContent(
-                                "<html><body bgcolor='#262837' style='color:#babccf'></body></html>",
+                                "<html><body bgcolor='#1D3C69' style='color:#babccf'></body></html>",
                                 "text/html");
             }
         } else {
@@ -118,10 +119,26 @@ public class Application {
             if (!lastLookUpWord.isEmpty()) {
                 lookUpWord();
             } else {
-                webView.getEngine().loadContent("", "text/html");
+                webView.getEngine().loadContent(
+                        "<html><body bgcolor='#D2F6F7' style='color:#000000'></body></html>",
+                        "text/html");
             }
         }
         prepareSearchList();
+    }
+
+    public void prepareWebView() {
+        if (!isLightMode()) {
+            webView.getEngine()
+                    .loadContent(
+                            "<html><body bgcolor='#1D3C69' style='color:#babccf'></body></html>",
+                            "text/html");
+        } else {
+            webView.getEngine()
+                    .loadContent(
+                            "<html><body bgcolor='#D2F6F7' style='color:#000000'></body></html>",
+                            "text/html");
+        }
     }
 
     /**
@@ -132,44 +149,45 @@ public class Application {
      * @param mode light mode or dark mode icons
      */
     public void prepareButtonIcon(boolean mode) {
-        String suffix = (mode ? "light" : "dark");
-        ImageView addIcon = new ImageView("icon/add-icon-" + suffix + ".png");
-        addIcon.setFitHeight(18);
-        addIcon.setFitWidth(18);
-        ImageView infoIcon = new ImageView("icon/info-icon-" + suffix + ".png");
-        infoIcon.setFitHeight(18);
-        infoIcon.setFitWidth(18);
-        ImageView helpIcon = new ImageView("icon/help-icon-" + suffix + ".png");
-        helpIcon.setFitHeight(18);
-        helpIcon.setFitWidth(18);
-        ImageView exportIcon = new ImageView("icon/export-icon-" + suffix + ".png");
-        exportIcon.setFitHeight(18);
-        exportIcon.setFitWidth(18);
-        ImageView pronounceIcon = new ImageView("icon/pronounce-icon-" + suffix + ".png");
-        pronounceIcon.setFitHeight(18);
-        pronounceIcon.setFitWidth(18);
-        ImageView editIcon = new ImageView("icon/edit-icon-" + suffix + ".png");
-        editIcon.setFitHeight(18);
-        editIcon.setFitWidth(18);
-        ImageView deleteIcon = new ImageView("icon/delete-icon-" + suffix + ".png");
-        deleteIcon.setFitHeight(18);
-        deleteIcon.setFitWidth(18);
-        ImageView googleIcon = new ImageView("icon/google-icon-" + suffix + ".png");
-        googleIcon.setFitHeight(18);
-        googleIcon.setFitWidth(18);
-        ImageView modeIcon = new ImageView("icon/mode-icon-" + suffix + ".png");
-        modeIcon.setFitHeight(30);
-        modeIcon.setFitWidth(30);
-
-        addWordButton.setGraphic(addIcon);
-        showInformationButton.setGraphic(infoIcon);
-        showInstructionButton.setGraphic(helpIcon);
-        exportButton.setGraphic(exportIcon);
-        pronounceButton.setGraphic(pronounceIcon);
-        editButton.setGraphic(editIcon);
-        deleteButton.setGraphic(deleteIcon);
-        googleButton.setGraphic(googleIcon);
-        modeToggle.setGraphic(modeIcon);
+        // String suffix = (mode ? "light" : "dark");
+        // ImageView addIcon = new ImageView("icon/add-icon-" + suffix + ".png");
+        // addIcon.setFitHeight(18);
+        // addIcon.setFitWidth(18);
+        // ImageView infoIcon = new ImageView("icon/info-icon-" + suffix + ".png");
+        // infoIcon.setFitHeight(18);
+        // infoIcon.setFitWidth(18);
+        // ImageView helpIcon = new ImageView("icon/help-icon-" + suffix + ".png");
+        // helpIcon.setFitHeight(18);
+        // helpIcon.setFitWidth(18);
+        // ImageView exportIcon = new ImageView("icon/export-icon-" + suffix + ".png");
+        // exportIcon.setFitHeight(18);
+        // exportIcon.setFitWidth(18);
+        // ImageView pronounceIcon = new ImageView("icon/pronounce-icon-" + suffix +
+        // ".png");
+        // pronounceIcon.setFitHeight(18);
+        // pronounceIcon.setFitWidth(18);
+        // ImageView editIcon = new ImageView("icon/edit-icon-" + suffix + ".png");
+        // editIcon.setFitHeight(18);
+        // editIcon.setFitWidth(18);
+        // ImageView deleteIcon = new ImageView("icon/delete-icon-" + suffix + ".png");
+        // deleteIcon.setFitHeight(18);
+        // deleteIcon.setFitWidth(18);
+        // ImageView googleIcon = new ImageView("icon/google-icon-" + suffix + ".png");
+        // googleIcon.setFitHeight(18);
+        // googleIcon.setFitWidth(18);
+        // ImageView modeIcon = new ImageView("icon/mode-icon-" + suffix + ".png");
+        // modeIcon.setFitHeight(30);
+        // modeIcon.setFitWidth(30);
+        //
+        // addWordButton.setGraphic(addIcon);
+        // showInformationButton.setGraphic(infoIcon);
+        // showInstructionButton.setGraphic(helpIcon);
+        // exportButton.setGraphic(exportIcon);
+        // pronounceButton.setGraphic(pronounceIcon);
+        // editButton.setGraphic(editIcon);
+        // deleteButton.setGraphic(deleteIcon);
+        // googleButton.setGraphic(googleIcon);
+        // modeToggle.setGraphic(modeIcon);
     }
 
     /**
@@ -270,15 +288,22 @@ public class Application {
             if (!Application.isLightMode()) {
                 webView.getEngine()
                         .loadContent(
-                                "<html><body bgcolor='#262837' style='color:#babccf'></body></html>",
+                                "<html><body bgcolor='#1D3C69' style='color:#babccf'></body></html>",
                                 "text/html");
             } else {
-                webView.getEngine().loadContent("", "text/html");
+                webView.getEngine()
+                        .loadContent(
+                                "<html><body bgcolor='#D2F6F7' style='color:#000000'></body></html>",
+                                "text/html");
             }
         } else {
             lastLookUpWord = target;
             if (!Application.isLightMode()) {
-                definition = "<html><body bgcolor='#262837' style='color:#babccf'>"
+                definition = "<html><body bgcolor='#1D3C69' style='color:#babccf'>"
+                        + definition
+                        + "</body></html>";
+            } else {
+                definition = "<html><body bgcolor='#D2F6F7' style='color:#000000'>"
                         + definition
                         + "</body></html>";
             }

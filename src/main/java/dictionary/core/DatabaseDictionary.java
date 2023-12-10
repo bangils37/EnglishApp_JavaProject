@@ -11,8 +11,8 @@ import java.util.ArrayList;
 public class DatabaseDictionary extends Dictionary {
     private static final String HOST_NAME = "localhost";
     private static final String DB_NAME = "dictionary";
-    private static final String USER_NAME = "root";
-    private static final String PASSWORD = "123456";
+    private static final String USER_NAME = "en-vi-dictionary";
+    private static final String PASSWORD = "n1-02-dictionary";
     private static final String PORT = "3306";
     private static final String MYSQL_URL = "jdbc:mysql://" + HOST_NAME + ":" + PORT + "/" + DB_NAME;
 
