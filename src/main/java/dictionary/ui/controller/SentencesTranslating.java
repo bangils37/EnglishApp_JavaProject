@@ -45,26 +45,26 @@ public class SentencesTranslating {
     public void prepareButtonIcon(boolean mode) {
         String suffix = (mode ? "light" : "dark");
         ImageView translateIcon = new ImageView("icon/translate-icon-" + suffix + ".png");
-        translateIcon.setFitHeight(18);
-        translateIcon.setFitWidth(18);
-        ImageView helpIcon = new ImageView("icon/help-icon-" + suffix + ".png");
-        helpIcon.setFitHeight(18);
-        helpIcon.setFitWidth(18);
-        ImageView dictionaryIcon = new ImageView("icon/dictionary-icon-" + suffix + ".png");
-        dictionaryIcon.setFitHeight(18);
-        dictionaryIcon.setFitWidth(18);
-        ImageView voiceIcon = new ImageView("icon/voice-icon-" + suffix + ".png");
-        voiceIcon.setFitHeight(28);
-        voiceIcon.setFitWidth(25);
-        ImageView alterIcon = new ImageView("icon/alter-icon-" + suffix + ".png");
-        alterIcon.setFitHeight(18);
-        alterIcon.setFitWidth(18);
-
+        translateIcon.setFitHeight(36);
+        translateIcon.setFitWidth(36);
+//        ImageView helpIcon = new ImageView("icon/help-icon-" + suffix + ".png");
+//        helpIcon.setFitHeight(18);
+//        helpIcon.setFitWidth(18);
+//        ImageView dictionaryIcon = new ImageView("icon/dictionary-icon-" + suffix + ".png");
+//        dictionaryIcon.setFitHeight(18);
+//        dictionaryIcon.setFitWidth(18);
+//        ImageView voiceIcon = new ImageView("icon/voice-icon-" + suffix + ".png");
+//        voiceIcon.setFitHeight(28);
+//        voiceIcon.setFitWidth(25);
+//        ImageView alterIcon = new ImageView("icon/alter-icon-" + suffix + ".png");
+//        alterIcon.setFitHeight(18);
+//        alterIcon.setFitWidth(18);
+//
         translateButton.setGraphic(translateIcon);
-        helpButton.setGraphic(helpIcon);
-        dictionaryButton.setGraphic(dictionaryIcon);
-        voiceButton.setGraphic(voiceIcon);
-        alterButton.setGraphic(alterIcon);
+//        helpButton.setGraphic(helpIcon);
+//        dictionaryButton.setGraphic(dictionaryIcon);
+//        voiceButton.setGraphic(voiceIcon);
+//        alterButton.setGraphic(alterIcon);
     }
 
     /**

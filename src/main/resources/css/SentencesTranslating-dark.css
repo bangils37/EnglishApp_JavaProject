@@ -1,41 +1,82 @@
+@font-face {
+    src: url('PaytoneOne-Regular.ttf');
+}
+
 * {
-  -fx-text-fill: #babccf;
+    -fx-text-fill: #FFFFFF;
+    -fx-font-family: "Paytone One";
 }
 
 #anchorPane {
-  -fx-background-color: #16161f;
+    -fx-background-color: #080B35;
 }
 
-.button, .text-area .content {
-  -fx-background-color: #262837;
+#task_bar {
+    -fx-background-color: #04031C;
 }
 
-.text-field:focused {
-  -fx-border-color: #5478ba;
-  -fx-border-width: 2px;
+#upButton {
+    -fx-text-fill: #FFFFFF;
+}
+#downButton {
+    -fx-text-fill: #FFFFFF;
 }
 
+.text-area,
+.text-area .content {
+   -fx-background-color: #1D3C69;
+}
+
+.text-area:focused,
+.text-area:focused .content {
+   -fx-background-color: #1D3C69;
+}
+
+.button {
+    -fx-background-color: #152A5D;
+    -fx-text-fill: #ffffff;
+    -fx-background-radius: 30;
+}
 
 .button:hover {
-  -fx-background-color: #525874;
+    -fx-background-color: #525874;
 }
 
 .button:focused {
-  -fx-border-color: #5478ba;
-  -fx-border-width: 2px;
+}
+
+#dictionaryButton{
+    -fx-background-radius: 30 0 0 30;
+}
+
+#helpButton{
+    -fx-background-radius: 30 0 0 30;
+}
+
+#InfoButton{
+    -fx-background-radius: 30 0 0 30;
+}
+
+#iconButton{
+    -fx-background-color: #04031C;
+}
+#iconButton1{
+    -fx-background-color: #04031C;
+}
+#iconButton2{
+    -fx-background-color: #04031C;
 }
 
 .scroll-bar:vertical {
-  -fx-background-color: #16161f;
-
+    -fx-background-color: #16161f;
 }
 
 .scroll-bar:vertical .thumb {
-  -fx-background-color: derive(#262837, 60.0%);
-  -fx-background-radius: 2.0em;
+     -fx-background-color: derive(#262837, 60.0%);
+     -fx-background-radius: 2.0em;
 }
 
 .scroll-bar:vertical .thumb:hover {
-  -fx-background-color: derive(#262837, 10.0%);
-  -fx-background-radius: 2.0em;
+     -fx-background-color: derive(#262837, 10.0%);
+     -fx-background-radius: 2.0em;
 }

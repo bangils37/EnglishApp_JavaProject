@@ -5,11 +5,13 @@ import static dictionary.App.dictionary;
 import dictionary.server.History;
 import dictionary.server.TextToSpeech;
 import dictionary.server.Trie;
+
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Objects;
 import java.util.Optional;
+
 import javafx.application.Platform;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
@@ -40,22 +42,35 @@ import javafx.util.Callback;
 public class Application {
     public static boolean lightMode = true;
     private String lastLookUpWord = "";
-    @FXML private TextField inputText;
-    @FXML private ListView<String> searchList;
-    @FXML private WebView webView;
+    @FXML
+    private TextField inputText;
+    @FXML
+    private ListView<String> searchList;
+    @FXML
+    private WebView webView;
     private int lastIndex = 0;
     private Image historyIcon;
-    @FXML private Button addWordButton;
-    @FXML private Button showInformationButton;
-    @FXML private Button showInstructionButton;
-    @FXML private Button exportButton;
-    @FXML private Button pronounceButton;
-    @FXML private Button editButton;
-    @FXML private Button deleteButton;
-    @FXML private Button googleButton;
-    @FXML private Button modeToggle;
+    @FXML
+    private Button addWordButton;
+    @FXML
+    private Button showInformationButton;
+    @FXML
+    private Button showInstructionButton;
+    @FXML
+    private Button exportButton;
+    @FXML
+    private Button pronounceButton;
+    @FXML
+    private Button editButton;
+    @FXML
+    private Button deleteButton;
+    @FXML
+    private Button googleButton;
+    @FXML
+    private Button modeToggle;
 
-    public Application() {}
+    public Application() {
+    }
 
     public static boolean isLightMode() {
         return lightMode;
@@ -188,7 +203,9 @@ public class Application {
         }
     }
 
-    /** Tải biểu tượng lịch sử vào biểu tượng hình ảnh tương ứng. */
+    /**
+     * Tải biểu tượng lịch sử vào biểu tượng hình ảnh tương ứng.
+     */
     private void prepareHistoryIcon(boolean mode) {
         try {
             historyIcon =
@@ -228,7 +245,7 @@ public class Application {
                             @Override
                             public void updateItem(String item, boolean empty) {
                                 super.updateItem(item, empty);
-                                 if (empty || item == null) {
+                                if (empty || item == null) {
                                     setGraphic(null);
                                     setText(null);
                                 } else if (item.charAt(0) != '#') {
@@ -249,7 +266,9 @@ public class Application {
                 });
     }
 
-    /** Tra cứu từ trong từ điển và hiển thị định nghĩa của nó trong `webView`. */
+    /**
+     * Tra cứu từ trong từ điển và hiển thị định nghĩa của nó trong `webView`.
+     */
     @FXML
     public void lookUpWord() {
         String target = inputText.getText();
@@ -276,7 +295,8 @@ public class Application {
                 webView.getEngine()
                         .loadContent(
                                 "<html><body bgcolor='#D2F6F7' style='color:#000000'></body></html>",
-                                "text/html");            }
+                                "text/html");
+            }
         } else {
             lastLookUpWord = target;
             if (!Application.isLightMode()) {
@@ -284,8 +304,7 @@ public class Application {
                         "<html><body bgcolor='#1D3C69' style='color:#babccf'>"
                                 + definition
                                 + "</body></html>";
-            }
-            else {
+            } else {
                 definition =
                         "<html><body bgcolor='#D2F6F7' style='color:#000000'>"
                                 + definition
@@ -365,6 +384,14 @@ public class Application {
                                                         .getResource(
                                                                 "/css/SentencesTranslating-dark.css"))
                                         .toExternalForm());
+            } else {
+                scene.getStylesheets()
+                        .add(
+                                Objects.requireNonNull(
+                                                getClass()
+                                                        .getResource(
+                                                                "/css/SentencesTranslating-light.css"))
+                                        .toExternalForm());
             }
             appStage.setTitle("Sentences Translator");
             appStage.setScene(scene);
@@ -374,7 +401,9 @@ public class Application {
         }
     }
 
-    /** Phát âm từ tiếng Anh đang hiển thị trong `webView`. */
+    /**
+     * Phát âm từ tiếng Anh đang hiển thị trong `webView`.
+     */
     @FXML
     public void playSound() {
         if (!lastLookUpWord.isEmpty()) {
@@ -513,7 +542,9 @@ public class Application {
         }
     }
 
-    /** Mở cửa sổ xác nhận xóa cho từ vừa tìm kiếm (ở `webView`). */
+    /**
+     * Mở cửa sổ xác nhận xóa cho từ vừa tìm kiếm (ở `webView`).
+     */
     @FXML
     public void deleteWord() {
         if (lastLookUpWord.isEmpty()) {
@@ -591,7 +622,7 @@ public class Application {
                                                         (Application.isLightMode()
                                                                 ? "/css/General-light.css"
                                                                 : "/css/General-dark.css")))
-                                .toExternalForm()); 
+                                .toExternalForm());
     }
 
     /**
