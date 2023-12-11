@@ -69,7 +69,10 @@ public class Application {
     @FXML
     private Button modeToggle;
 
+    private SpeakerStrategy speakerStrategy;
+
     public Application() {
+        speakerStrategy = new EnSpeakerStrategy();
     }
 
     public static boolean isLightMode() {
@@ -394,7 +397,6 @@ public class Application {
     @FXML
     public void playSound() {
         if (!lastLookUpWord.isEmpty()) {
-            SpeakerStrategy speakerStrategy = new EnSpeakerStrategy();
             speakerStrategy.speak(lastLookUpWord);
         }
     }
@@ -438,7 +440,7 @@ public class Application {
                     Objects.requireNonNull(
                             getClass()
                                     .getClassLoader()
-                                    .getResource("")));
+                                    .getResource("fxml/InformationPopup.fxml")));
             Stage infStage = new Stage();
             Stage appStage = (Stage) ((Node) event.getSource()).getScene().getWindow();
             infStage.initOwner(appStage);

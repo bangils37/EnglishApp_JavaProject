@@ -1,10 +1,6 @@
 package dictionary;
 
-import java.io.BufferedInputStream;
-import java.io.FileOutputStream;
 import java.io.IOException;
-import java.net.HttpURLConnection;
-import java.net.URL;
 import java.sql.SQLException;
 import java.util.Arrays;
 import java.util.List;
@@ -35,7 +31,6 @@ import dictionary.core.DatabaseDictionary;
 import dictionary.core.Dictionary;
 import dictionary.core.Trie;
 import dictionary.util.StringUtil;
-import javafx.scene.text.Text;
 
 public class TerminalApp {
 
@@ -49,7 +44,7 @@ public class TerminalApp {
 
     public static void main(String[] args) throws IOException, SQLException {
         initializeDictionary();
-        Screen screen = createScreen();
+        createScreen();
         BasicWindow window = createWindow();
         Panel mainPanel = createMainPanel();
         window.setComponent(mainPanel);

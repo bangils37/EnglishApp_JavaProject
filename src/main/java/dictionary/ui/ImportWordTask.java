@@ -42,6 +42,7 @@ public class ImportWordTask extends Task<Void> {
             int counter = 0;
             while ((inputLine = in.readLine()) != null) {
                 if (isCancelled()) {
+                    in.close();
                     return null;
                 }
                 int pos = inputLine.indexOf("\t");
