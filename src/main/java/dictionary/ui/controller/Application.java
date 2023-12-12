@@ -100,49 +100,35 @@ public class Application {
     @FXML
     public void toggleModeButton() {
         toggleMode();
-        if (!isLightMode()) {
-            modeToggle.getScene().getStylesheets().clear();
-            modeToggle.getScene().getStylesheets().add("/css/Application-dark.css");
-            inputText.requestFocus();
-            prepareHistoryIcon(false);
-            prepareButtonIcon(false);
-            if (!lastLookUpWord.isEmpty()) {
-                lookUpWord();
-            } else {
-                webView.getEngine()
-                        .loadContent(
-                                "<html><body bgcolor='#1D3C69' style='color:#babccf'></body></html>",
-                                "text/html");
-            }
+        updateSceneStylesheet();
+        inputText.requestFocus();
+        prepareHistoryIcon(!isLightMode());
+        prepareButtonIcon(!isLightMode());
+        if (!lastLookUpWord.isEmpty()) {
+            lookUpWord();
         } else {
-            modeToggle.getScene().getStylesheets().clear();
-            modeToggle.getScene().getStylesheets().add("/css/Application-light.css");
-            inputText.requestFocus();
-            prepareHistoryIcon(true);
-            prepareButtonIcon(true);
-            if (!lastLookUpWord.isEmpty()) {
-                lookUpWord();
-            } else {
-                webView.getEngine().loadContent(
-                        "<html><body bgcolor='#D2F6F7' style='color:#000000'></body></html>",
-                        "text/html");
-            }
+            updateWebViewContent();
         }
         prepareSearchList();
     }
 
+    private void updateSceneStylesheet() {
+        modeToggle.getScene().getStylesheets().clear();
+        modeToggle.getScene().getStylesheets().add(
+                isLightMode() ? "/css/Application-light.css" : "/css/Application-dark.css");
+    }
+
+    private void updateWebViewContent() {
+        String backgroundColor = isLightMode() ? "#D2F6F7" : "#1D3C69";
+        String textColor = isLightMode() ? "#000000" : "#babccf";
+        webView.getEngine().loadContent(
+                String.format("<html><body bgcolor='%s' style='color:%s'></body></html>",
+                        backgroundColor, textColor),
+                "text/html");
+    }
+
     public void prepareWebView() {
-        if (!isLightMode()) {
-            webView.getEngine()
-                    .loadContent(
-                            "<html><body bgcolor='#1D3C69' style='color:#babccf'></body></html>",
-                            "text/html");
-        } else {
-            webView.getEngine()
-                    .loadContent(
-                            "<html><body bgcolor='#D2F6F7' style='color:#000000'></body></html>",
-                            "text/html");
-        }
+        updateWebViewContent();
     }
 
     /**
@@ -153,45 +139,6 @@ public class Application {
      * @param mode light mode or dark mode icons
      */
     public void prepareButtonIcon(boolean mode) {
-        // String suffix = (mode ? "light" : "dark");
-        // ImageView addIcon = new ImageView("icon/add-icon-" + suffix + ".png");
-        // addIcon.setFitHeight(18);
-        // addIcon.setFitWidth(18);
-        // ImageView infoIcon = new ImageView("icon/info-icon-" + suffix + ".png");
-        // infoIcon.setFitHeight(18);
-        // infoIcon.setFitWidth(18);
-        // ImageView helpIcon = new ImageView("icon/help-icon-" + suffix + ".png");
-        // helpIcon.setFitHeight(18);
-        // helpIcon.setFitWidth(18);
-        // ImageView exportIcon = new ImageView("icon/export-icon-" + suffix + ".png");
-        // exportIcon.setFitHeight(18);
-        // exportIcon.setFitWidth(18);
-        // ImageView pronounceIcon = new ImageView("icon/pronounce-icon-" + suffix +
-        // ".png");
-        // pronounceIcon.setFitHeight(18);
-        // pronounceIcon.setFitWidth(18);
-        // ImageView editIcon = new ImageView("icon/edit-icon-" + suffix + ".png");
-        // editIcon.setFitHeight(18);
-        // editIcon.setFitWidth(18);
-        // ImageView deleteIcon = new ImageView("icon/delete-icon-" + suffix + ".png");
-        // deleteIcon.setFitHeight(18);
-        // deleteIcon.setFitWidth(18);
-        // ImageView googleIcon = new ImageView("icon/google-icon-" + suffix + ".png");
-        // googleIcon.setFitHeight(18);
-        // googleIcon.setFitWidth(18);
-        // ImageView modeIcon = new ImageView("icon/mode-icon-" + suffix + ".png");
-        // modeIcon.setFitHeight(30);
-        // modeIcon.setFitWidth(30);
-        //
-        // addWordButton.setGraphic(addIcon);
-        // showInformationButton.setGraphic(infoIcon);
-        // showInstructionButton.setGraphic(helpIcon);
-        // exportButton.setGraphic(exportIcon);
-        // pronounceButton.setGraphic(pronounceIcon);
-        // editButton.setGraphic(editIcon);
-        // deleteButton.setGraphic(deleteIcon);
-        // googleButton.setGraphic(googleIcon);
-        // modeToggle.setGraphic(modeIcon);
     }
 
     /**
@@ -211,14 +158,12 @@ public class Application {
     }
 
     /** Load the history icon into its corresponding icon image. */
-    private void prepareHistoryIcon(boolean mode) {
+    private void prepareHistoryIcon(boolean isLightMode) {
+        String iconType = isLightMode ? "light" : "dark";
         try {
             historyIcon = new Image(
                     new FileInputStream(
-                            "src/main/resources/icon/history-icon-"
-                                    + (mode ? "light" : "dark")
-                                    + ".png"));
-
+                            "src/main/resources/icon/history-icon-" + iconType + ".png"));
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -234,14 +179,27 @@ public class Application {
         String target = inputText.getText();
         ArrayList<String> searchedWords = Trie.getInstance().search(target);
         ArrayList<String> allHistory = History.getInstance().getHistorySearch();
+
+        populateSearchListWithHistory(allHistory, target);
+        populateSearchListWithSearchedWords(searchedWords);
+        configureSearchListCellFactory();
+    }
+
+    private void populateSearchListWithHistory(ArrayList<String> allHistory, String target) {
         for (int i = allHistory.size() - 1; i >= 0; i--) {
             if (target.isEmpty() || allHistory.get(i).startsWith(target)) {
                 searchList.getItems().add("#" + allHistory.get(i));
             }
         }
+    }
+
+    private void populateSearchListWithSearchedWords(ArrayList<String> searchedWords) {
         for (String w : searchedWords) {
             searchList.getItems().add(w);
         }
+    }
+
+    private void configureSearchListCellFactory() {
         searchList.setCellFactory(
                 new Callback<>() {
                     @Override
@@ -283,36 +241,40 @@ public class Application {
         }
 
         String definition = dictionary.lookUpWord(target);
+        handleDefinitionResult(definition);
+    }
+
+    private void handleDefinitionResult(String definition) {
         if (definition.equals("404")) {
-            Alert alert = new Alert(Alert.AlertType.INFORMATION);
-            setAlertCss(alert);
-            alert.setTitle("Thông báo");
-            alert.setContentText("Từ này không tồn tại!");
-            alert.show();
-            if (!Application.isLightMode()) {
-                webView.getEngine()
-                        .loadContent(
-                                "<html><body bgcolor='#1D3C69' style='color:#babccf'></body></html>",
-                                "text/html");
-            } else {
-                webView.getEngine()
-                        .loadContent(
-                                "<html><body bgcolor='#D2F6F7' style='color:#000000'></body></html>",
-                                "text/html");
-            }
+            showNotFoundErrorAlert();
+            resetWebViewContent();
         } else {
-            lastLookUpWord = target;
-            if (!Application.isLightMode()) {
-                definition = "<html><body bgcolor='#1D3C69' style='color:#babccf'>"
-                        + definition
-                        + "</body></html>";
-            } else {
-                definition = "<html><body bgcolor='#D2F6F7' style='color:#000000'>"
-                        + definition
-                        + "</body></html>";
-            }
-            webView.getEngine().loadContent(definition, "text/html");
+            updateWebViewContent(definition);
         }
+    }
+
+    private void showNotFoundErrorAlert() {
+        Alert alert = new Alert(Alert.AlertType.INFORMATION);
+        setAlertCss(alert);
+        alert.setTitle("Thông báo");
+        alert.setContentText("Từ này không tồn tại!");
+        alert.show();
+    }
+
+    private void resetWebViewContent() {
+        String backgroundColor = Application.isLightMode() ? "#D2F6F7" : "#1D3C69";
+        String textColor = Application.isLightMode() ? "#000000" : "#babccf";
+        String content = String.format("<html><body bgcolor='%s' style='color:%s'></body></html>",
+                backgroundColor, textColor);
+        webView.getEngine().loadContent(content, "text/html");
+    }
+
+    private void updateWebViewContent(String definition) {
+        String backgroundColor = Application.isLightMode() ? "#D2F6F7" : "#1D3C69";
+        String textColor = Application.isLightMode() ? "#000000" : "#babccf";
+        String formattedDefinition = String.format("<html><body bgcolor='%s' style='color:%s'>%s</body></html>",
+                backgroundColor, textColor, definition);
+        webView.getEngine().loadContent(formattedDefinition, "text/html");
     }
 
     /**
@@ -326,19 +288,25 @@ public class Application {
             return;
         }
         if (e.getCode() == KeyCode.ENTER) {
-            String target = searchList.getSelectionModel().getSelectedItem();
-            if (target.startsWith("#")) {
-                inputText.setText(target.substring(1));
-            } else {
-                inputText.setText(target);
-            }
-            lookUpWord();
+            handleEnterKeyPress();
         } else if (e.getCode() == KeyCode.UP) {
-            if (searchList.getSelectionModel().getSelectedIndex() == 0 && lastIndex == 0) {
-                inputText.requestFocus();
-            }
+            handleUpKeyPress();
         }
         lastIndex = searchList.getSelectionModel().getSelectedIndex();
+    }
+
+    private void handleEnterKeyPress() {
+        String target = searchList.getSelectionModel().getSelectedItem();
+        if (target != null) {
+            inputText.setText(target.startsWith("#") ? target.substring(1) : target);
+            lookUpWord();
+        }
+    }
+
+    private void handleUpKeyPress() {
+        if (searchList.getSelectionModel().getSelectedIndex() == 0 && lastIndex == 0) {
+            inputText.requestFocus();
+        }
     }
 
     /**
@@ -351,13 +319,19 @@ public class Application {
      */
     @FXML
     public void selectWordDoubleClick(MouseEvent mouseEvent) {
-        if (mouseEvent.getButton().equals(MouseButton.PRIMARY) && mouseEvent.getClickCount() == 2) {
-            String target = searchList.getSelectionModel().getSelectedItem();
-            if (target.startsWith("#")) {
-                inputText.setText(target.substring(1));
-            } else {
-                inputText.setText(target);
-            }
+        if (isDoubleClick(mouseEvent)) {
+            handleDoubleClick();
+        }
+    }
+
+    private boolean isDoubleClick(MouseEvent mouseEvent) {
+        return mouseEvent.getButton().equals(MouseButton.PRIMARY) && mouseEvent.getClickCount() == 2;
+    }
+
+    private void handleDoubleClick() {
+        String target = searchList.getSelectionModel().getSelectedItem();
+        if (target != null) {
+            inputText.setText(target.startsWith("#") ? target.substring(1) : target);
             lookUpWord();
         }
     }
@@ -370,44 +344,33 @@ public class Application {
     @FXML
     public void changeToSentencesTranslating(ActionEvent event) {
         try {
-            Parent root = FXMLLoader.load(
-                    Objects.requireNonNull(
-                            getClass()
-                                    .getClassLoader()
-                                    .getResource("fxml/SentencesTranslating.fxml")));
-            Stage appStage = (Stage) ((Node) event.getSource()).getScene().getWindow();
-            Scene scene = new Scene(root);
-            if (!Application.isLightMode()) {
-                scene.getStylesheets()
-                        .add(
-                                Objects.requireNonNull(
-                                        getClass()
-                                                .getResource(
-                                                        "/css/SentencesTranslating-dark.css"))
-                                        .toExternalForm());
-            } else {
-                scene.getStylesheets()
-                        .add(
-                                Objects.requireNonNull(
-                                                getClass()
-                                                        .getResource(
-                                                                "/css/SentencesTranslating-light.css"))
-                                        .toExternalForm());
-            }
-            appStage.setTitle("Sentences Translator");
-            appStage.setScene(scene);
-            appStage.show();
+            loadSentencesTranslatingScene(event);
         } catch (IOException e) {
             e.printStackTrace();
         }
     }
 
-    /** Pronounce the English word that is currently showed in the `webView`. */
+    private void loadSentencesTranslatingScene(ActionEvent event) throws IOException {
+        Parent root = FXMLLoader.load(getClass().getClassLoader().getResource("fxml/SentencesTranslating.fxml"));
+        Stage appStage = (Stage) ((Node) event.getSource()).getScene().getWindow();
+        Scene scene = new Scene(root);
+        String cssPath = Application.isLightMode() ? "/css/SentencesTranslating-light.css" : "/css/SentencesTranslating-dark.css";
+        scene.getStylesheets().add(Objects.requireNonNull(getClass().getResource(cssPath)).toExternalForm());
+        appStage.setTitle("Sentences Translator");
+        appStage.setScene(scene);
+        appStage.show();
+    }
+
+    /** Pronounce the English word that is currently shown in the `webView`. */
     @FXML
     public void playSound() {
-        if (!lastLookUpWord.isEmpty()) {
+        if (isLastLookUpWordNotEmpty()) {
             speakerStrategy.speak(lastLookUpWord);
         }
+    }
+
+    private boolean isLastLookUpWordNotEmpty() {
+        return !lastLookUpWord.isEmpty();
     }
 
     /**
@@ -418,24 +381,28 @@ public class Application {
     @FXML
     public void exportToFile(ActionEvent event) {
         try {
-            Parent root = FXMLLoader.load(
-                    Objects.requireNonNull(
-                            getClass()
-                                    .getClassLoader()
-                                    .getResource("fxml/ExportToFile.fxml")));
-            Stage appStage = (Stage) ((Node) event.getSource()).getScene().getWindow();
-            Stage newStage = new Stage();
-            Scene scene = new Scene(root);
-            setGeneralCss(scene);
-            newStage.setScene(scene);
-            newStage.initOwner(appStage);
-            newStage.setTitle("Xuất dữ liệu từ điển");
-            newStage.initModality(Modality.APPLICATION_MODAL);
-            newStage.show();
-
+            openExportToFileWindow(event);
         } catch (Exception e) {
             e.printStackTrace();
         }
+    }
+
+    private void openExportToFileWindow(ActionEvent event) throws IOException {
+        Parent root = FXMLLoader.load(getClass().getClassLoader().getResource("fxml/ExportToFile.fxml"));
+        Stage appStage = (Stage) ((Node) event.getSource()).getScene().getWindow();
+        Stage newStage = createPopUpStage(root, appStage, "Xuất dữ liệu từ điển");
+        newStage.show();
+    }
+
+    private Stage createPopUpStage(Parent root, Stage ownerStage, String title) {
+        Stage newStage = new Stage();
+        Scene scene = new Scene(root);
+        setGeneralCss(scene);
+        newStage.setScene(scene);
+        newStage.initOwner(ownerStage);
+        newStage.setTitle(title);
+        newStage.initModality(Modality.APPLICATION_MODAL);
+        return newStage;
     }
 
     /**
@@ -445,23 +412,16 @@ public class Application {
      */
     public void showInformation(ActionEvent event) {
         try {
-            Parent root = FXMLLoader.load(
-                    Objects.requireNonNull(
-                            getClass()
-                                    .getClassLoader()
-                                    .getResource("fxml/InformationPopup.fxml")));
-            Stage infStage = new Stage();
-            Stage appStage = (Stage) ((Node) event.getSource()).getScene().getWindow();
-            infStage.initOwner(appStage);
-            Scene scene = new Scene(root);
-            setGeneralCss(scene);
-            infStage.setTitle("Về ứng dụng");
-            infStage.setScene(scene);
-            infStage.initModality(Modality.APPLICATION_MODAL);
-            infStage.show();
+            openInformationPopup(event);
         } catch (IOException e) {
             e.printStackTrace();
         }
+    }
+
+    private void openInformationPopup(ActionEvent event) throws IOException {
+        Parent root = FXMLLoader.load(getClass().getClassLoader().getResource("fxml/InformationPopup.fxml"));
+        Stage infStage = createPopUpStage(root, (Stage) ((Node) event.getSource()).getScene().getWindow(), "Về ứng dụng");
+        infStage.show();
     }
 
     /**
@@ -472,23 +432,16 @@ public class Application {
     @FXML
     public void showInstruction(ActionEvent event) {
         try {
-            Parent root = FXMLLoader.load(
-                    Objects.requireNonNull(
-                            getClass()
-                                    .getClassLoader()
-                                    .getResource("fxml/InstructionPopup.fxml")));
-            Stage insStage = new Stage();
-            Stage appStage = (Stage) ((Node) event.getSource()).getScene().getWindow();
-            insStage.initOwner(appStage);
-            Scene scene = new Scene(root);
-            setGeneralCss(scene);
-            insStage.setTitle("Hướng dẫn sử dụng");
-            insStage.setScene(scene);
-            insStage.initModality(Modality.APPLICATION_MODAL);
-            insStage.show();
+            openInstructionPopup(event);
         } catch (IOException e) {
             e.printStackTrace();
         }
+    }
+
+    private void openInstructionPopup(ActionEvent event) throws IOException {
+        Parent root = FXMLLoader.load(getClass().getClassLoader().getResource("fxml/InstructionPopup.fxml"));
+        Stage insStage = createPopUpStage(root, (Stage) ((Node) event.getSource()).getScene().getWindow(), "Hướng dẫn sử dụng");
+        insStage.show();
     }
 
     /**
@@ -499,141 +452,129 @@ public class Application {
      */
     @FXML
     public void editWordDefinition(ActionEvent event) {
-        if (lastLookUpWord.isEmpty()) {
-            Alert alert = new Alert(AlertType.ERROR);
-            setAlertCss(alert);
-            alert.setTitle("Thông báo");
-            alert.setContentText("Chưa chọn từ để chỉnh sửa!");
-            alert.show();
+        if (isLastLookUpWordEmpty()) {
+            showSelectWordErrorAlert();
             return;
         }
-        if (dictionary.lookUpWord(lastLookUpWord).equals("404")) {
-            Alert alert = new Alert(AlertType.ERROR);
-            setAlertCss(alert);
-            alert.setTitle("Lỗi");
-            alert.setContentText(
-                    "Không tồn tại từ `" + lastLookUpWord + "` trong từ điển để chỉnh sửa!");
-            alert.show();
+        if (isWordNotFound()) {
+            showWordNotFoundErrorAlert();
             return;
         }
+
         EditDefinition.setEditingWord(lastLookUpWord);
         try {
-            Parent root = FXMLLoader.load(
-                    Objects.requireNonNull(
-                            getClass()
-                                    .getClassLoader()
-                                    .getResource("fxml/EditDefinition.fxml")));
-            Stage appStage = (Stage) ((Node) event.getSource()).getScene().getWindow();
-            Stage newStage = new Stage();
-            Scene scene = new Scene(root);
-            setGeneralCss(scene);
-            newStage.setScene(scene);
-            newStage.initOwner(appStage);
-            newStage.setTitle("Chỉnh sửa giải nghĩa của từ");
-            newStage.initModality(Modality.APPLICATION_MODAL);
-            newStage.show();
-
-        } catch (Exception e) {
+            openEditDefinitionWindow(event);
+        } catch (IOException e) {
             e.printStackTrace();
         }
     }
 
-    /**
-     * Open (pop up) delete confirmation for the last looked up word (in the
-     * `webView`).
-     */
+    private boolean isLastLookUpWordEmpty() {
+        return lastLookUpWord.isEmpty();
+    }
+
+    private void showSelectWordErrorAlert() {
+        Alert alert = new Alert(AlertType.ERROR);
+        setAlertCss(alert);
+        alert.setTitle("Thông báo");
+        alert.setContentText("Chưa chọn từ để chỉnh sửa!");
+        alert.show();
+    }
+
+    private boolean isWordNotFound() {
+        return dictionary.lookUpWord(lastLookUpWord).equals("404");
+    }
+
+    private void showWordNotFoundErrorAlert() {
+        Alert alert = new Alert(AlertType.ERROR);
+        setAlertCss(alert);
+        alert.setTitle("Lỗi");
+        alert.setContentText("Không tồn tại từ `" + lastLookUpWord + "` trong từ điển để chỉnh sửa!");
+        alert.show();
+    }
+
+    private void openEditDefinitionWindow(ActionEvent event) throws IOException {
+        Parent root = FXMLLoader.load(getClass().getClassLoader().getResource("fxml/EditDefinition.fxml"));
+        Stage appStage = (Stage) ((Node) event.getSource()).getScene().getWindow();
+        Stage newStage = createPopUpStage(root, appStage, "Chỉnh sửa giải nghĩa của từ");
+        newStage.show();
+    }
+
     @FXML
     public void deleteWord() {
         if (lastLookUpWord.isEmpty()) {
-            Alert alert = new Alert(AlertType.ERROR);
-            setAlertCss(alert);
-            alert.setTitle("Thông báo");
-            alert.setContentText("Chưa chọn từ để xóa!");
-            alert.show();
+            showAlert("Thông báo", "Chưa chọn từ để xóa!", AlertType.ERROR);
         } else {
-
-            Alert alert = new Alert(AlertType.CONFIRMATION);
-            setAlertCss(alert);
-            alert.setTitle("Xóa từ");
-            alert.setHeaderText(
-                    "Bạn có chắc chắn muốn xóa từ `"
-                            + lastLookUpWord
-                            + "` khỏi từ điển hay không?");
-            Optional<ButtonType> option = alert.showAndWait();
-            if (option.isPresent()) {
-                if (option.get() == ButtonType.OK) {
-                    if (dictionary.deleteWord(lastLookUpWord)) {
-                        Alert alert1 = new Alert(AlertType.INFORMATION);
-                        setAlertCss(alert1);
-                        alert1.setTitle("Thông báo");
-                        alert1.setContentText("Xóa từ `" + lastLookUpWord + "` thành công!");
-                        alert1.show();
-                    } else {
-                        Alert alert1 = new Alert(AlertType.ERROR);
-
-                        alert1.setTitle("Lỗi");
-                        alert1.setContentText(
-                                "Không tồn tại từ `" + lastLookUpWord + "` trong từ điển để xóa!");
-                        alert1.show();
-                    }
-                }
+            if (showConfirmationAlert("Xóa từ", "Bạn có chắc chắn muốn xóa từ `" + lastLookUpWord + "` khỏi từ điển hay không?")) {
+                performDeleteWord();
             }
-            lastLookUpWord = "";
         }
     }
 
-    /**
-     * Open (pop up) the add word window for adding new words to the dictionary.
-     *
-     * @param event action event
-     */
+    private void showAlert(String title, String content, AlertType type) {
+        Alert alert = createAlert(title, content, type);
+        alert.show();
+    }
+
+    private boolean showConfirmationAlert(String title, String headerText) {
+        Alert confirmationAlert = createAlert(title, headerText, AlertType.CONFIRMATION);
+        Optional<ButtonType> option = confirmationAlert.showAndWait();
+        return option.map(buttonType -> buttonType == ButtonType.OK).orElse(false);
+    }
+
+    private Alert createAlert(String title, String content, AlertType type) {
+        Alert alert = new Alert(type);
+        setAlertCss(alert);
+        alert.setTitle(title);
+        alert.setContentText(content);
+        return alert;
+    }
+
+    private void performDeleteWord() {
+        if (dictionary.deleteWord(lastLookUpWord)) {
+            showAlert("Thông báo", "Xóa từ `" + lastLookUpWord + "` thành công!", AlertType.INFORMATION);
+        } else {
+            showAlert("Lỗi", "Không tồn tại từ `" + lastLookUpWord + "` trong từ điển để xóa!", AlertType.ERROR);
+        }
+        lastLookUpWord = "";
+    }
+
     @FXML
     public void addingWord(ActionEvent event) {
         try {
             FXMLLoader loader = new FXMLLoader(getClass().getClassLoader().getResource("fxml/AddWord.fxml"));
             Parent root = loader.load();
             AddWord controller = loader.getController();
-            Stage addStage = new Stage();
-            Stage appStage = (Stage) ((Node) event.getSource()).getScene().getWindow();
-            addStage.initOwner(appStage);
-            Scene scene = new Scene(root);
-            setGeneralCss(scene);
-            addStage.setTitle("Thêm từ");
-            addStage.setResizable(false);
-            addStage.setScene(scene);
-            addStage.initModality(Modality.APPLICATION_MODAL);
+            Stage addStage = createAndShowStage("Thêm từ", root, event);
             addStage.setOnCloseRequest(e -> controller.closeWhileImporting());
-            addStage.show();
         } catch (IOException e) {
             e.printStackTrace();
         }
     }
 
-    private void setGeneralCss(Scene scene) {
-        scene.getStylesheets()
-                .add(
-                        Objects.requireNonNull(
-                                getClass()
-                                        .getResource(
-                                                (Application.isLightMode()
-                                                        ? "/css/General-light.css"
-                                                        : "/css/General-dark.css")))
-                                .toExternalForm());
+    private Stage createAndShowStage(String title, Parent root, ActionEvent event) {
+        Stage newStage = new Stage();
+        Stage appStage = (Stage) ((Node) event.getSource()).getScene().getWindow();
+        newStage.initOwner(appStage);
+        Scene scene = new Scene(root);
+        setGeneralCss(scene);
+        newStage.setTitle(title);
+        newStage.setResizable(false);
+        newStage.setScene(scene);
+        newStage.initModality(Modality.APPLICATION_MODAL);
+        newStage.show();
+        return newStage;
     }
 
-    /**
-     * Set CSS for alert box in case of dark mode.
-     *
-     * @param alert alert
-     */
+    private void setGeneralCss(Scene scene) {
+        String cssPath = Application.isLightMode() ? "/css/General-light.css" : "/css/General-dark.css";
+        scene.getStylesheets().add(Objects.requireNonNull(getClass().getResource(cssPath)).toExternalForm());
+    }
+
     private void setAlertCss(Alert alert) {
         if (!Application.isLightMode()) {
             DialogPane dialogPane = alert.getDialogPane();
-            dialogPane
-                    .getStylesheets()
-                    .add(
-                            Objects.requireNonNull(getClass().getResource("/css/Alert-dark.css"))
-                                    .toExternalForm());
+            dialogPane.getStylesheets().add(Objects.requireNonNull(getClass().getResource("/css/Alert-dark.css")).toExternalForm());
             dialogPane.getStyleClass().add("alert");
         }
     }

@@ -11,8 +11,8 @@ import javafx.fxml.FXML;
 import javafx.scene.Node;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Alert.AlertType;
-import javafx.scene.control.Button;
 import javafx.scene.control.DialogPane;
+import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
 import javafx.stage.Stage;
@@ -22,16 +22,16 @@ public class ExportToFile {
     @FXML private Label dirLabel;
     @FXML private TextField fileName;
 
-    /** Focus on the browseButton when open the window. */
+    /** Tập trung vào browseButton khi cửa sổ được mở. */
     @FXML
     private void initialize() {
         Platform.runLater(() -> browseButton.requestFocus());
     }
 
     /**
-     * Choose the directory to save the exported file to.
+     * Chọn thư mục để lưu file xuất.
      *
-     * @param event action event
+     * @param event sự kiện
      */
     @FXML
     public void chooseDir(ActionEvent event) {
@@ -41,8 +41,8 @@ public class ExportToFile {
     }
 
     /**
-     * Export all the words into the selected directory and file name. Each line of the exported
-     * file is a word with its definition separated by a TAB character.
+     * Xuất tất cả các từ vào thư mục và tên file được chọn. Mỗi dòng của file xuất
+     * là một từ và định nghĩa của nó, cách nhau bởi ký tự TAB.
      */
     @FXML
     public void submitExport() {
@@ -50,28 +50,20 @@ public class ExportToFile {
         String dirPath = dirLabel.getText().strip();
         if (!dirPath.isEmpty() && !file.isEmpty()) {
             try {
-                dictionary.exportToFile(dirPath + "\\" + file);
-                Alert alert = new Alert(AlertType.INFORMATION);
-                setAlertCss(alert);
-                alert.setTitle("Thông báo");
-                alert.setContentText(
-                        "Thành công xuất dữ liệu ra file `" + dirPath + "\\" + file + "`");
-                alert.show();
+                String filePath = dirPath + "\\" + file;
+                dictionary.exportToFile(filePath);
+                showAlert("Thông báo", "Thành công xuất dữ liệu ra file `" + filePath + "`", AlertType.INFORMATION);
             } catch (IOException e) {
                 e.printStackTrace();
-                Alert alert = new Alert(AlertType.ERROR);
-                setAlertCss(alert);
-                alert.setTitle("Lỗi");
-                alert.setContentText("Không tìm thấy đường dẫn của file!");
-                alert.show();
+                showAlert("Lỗi", "Không tìm thấy đường dẫn của file!", AlertType.ERROR);
             }
         }
     }
 
     /**
-     * Set CSS for alert box in case of dark mode.
+     * Thiết lập CSS cho hộp thoại cảnh báo trong trường hợp chế độ tối.
      *
-     * @param alert alert
+     * @param alert hộp thoại cảnh báo
      */
     private void setAlertCss(Alert alert) {
         if (!Application.isLightMode()) {
@@ -83,5 +75,20 @@ public class ExportToFile {
                                     .toExternalForm());
             dialogPane.getStyleClass().add("alert");
         }
+    }
+
+    /**
+     * Hiển thị một cảnh báo với tiêu đề, nội dung và loại cảnh báo cụ thể.
+     *
+     * @param title   tiêu đề của cảnh báo
+     * @param content nội dung của cảnh báo
+     * @param type    loại của cảnh báo
+     */
+    private void showAlert(String title, String content, AlertType type) {
+        Alert alert = new Alert(type);
+        setAlertCss(alert);
+        alert.setTitle(title);
+        alert.setContentText(content);
+        alert.show();
     }
 }

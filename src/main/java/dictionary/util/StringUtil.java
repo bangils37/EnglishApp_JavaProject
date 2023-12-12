@@ -13,57 +13,43 @@ import org.jsoup.nodes.TextNode;
 public class StringUtil {
 
     /**
-     * Remove HTML tags from a string.
-     * 
-     * @param html string containing HTML tags
-     * @return string without HTML tags
+     * Loại bỏ các thẻ HTML từ một chuỗi.
+     *
+     * @param html chuỗi chứa các thẻ HTML
+     * @return chuỗi không có thẻ HTML
      */
     public static String removeHtmlTags(String html) {
-        html = html.replace("<I>", "");
-        html = html.replace("</I>", "");
-        html = html.replace("<Q>", "");
-        html = html.replace("</Q>", "");
-        html = html.replace("<br />", "\n");
-
-        return html;
+        return html.replaceAll("<(?:I|Q)>|</(?:I|Q)>|<br />", "\n");
     }
 
     /**
-     * Creates a string of spaces that is 'spaces' spaces long.
+     * Tạo một chuỗi khoảng trắng có chiều dài 'spaces'.
      *
-     * @param numSpaces The number of spaces to add to the string.
-     * @return the string of `numSpaces` spaces
+     * @param numSpaces Số lượng khoảng trắng để thêm vào chuỗi.
+     * @return chuỗi chứa `numSpaces` khoảng trắng
      */
     public static String createSpacesString(int numSpaces) {
-        if (numSpaces < 0) {
-            numSpaces = 0;
-        }
-        return CharBuffer.allocate(numSpaces).toString().replace('\0', ' ');
+        return numSpaces < 0 ? "" : " ".repeat(numSpaces);
     }
 
     /**
-     * Creates a string of `-`` that is 'length' characters long.
+     * Tạo một chuỗi `-` có chiều dài 'length'.
      *
-     * @param length The number of `-` characters to add to the vertical separator
-     *               line.
-     * @return the string of `length` characters `-`
+     * @param length Số lượng ký tự `-` để thêm vào dòng phân cách dọc.
+     * @return chuỗi chứa `length` ký tự `-`
      */
     public static String createLineSeparator(int length) {
-        if (length < 0) {
-            length = 0;
-        }
-        return CharBuffer.allocate(length).toString().replace('\0', '-');
+        return length < 0 ? "" : "-".repeat(length);
     }
 
     /**
-     * Convert HTML to plain text keeping line breaks, paragraph...
+     * Chuyển đổi HTML sang văn bản thuần túy giữ nguyên các dòng, đoạn văn...
      *
-     * <p>
-     * Reference:
+     * <p>Tham chiếu:
      * https://stackoverflow.com/questions/2513707/how-to-convert-html-to-text-keeping-linebreaks
      *
-     * @param html HTML String
-     * @return the plain text
+     * @param html Chuỗi HTML
+     * @return văn bản thuần túy
      */
     public static String htmlToText(String html) {
         Document document = Jsoup.parse(html);
@@ -73,14 +59,13 @@ public class StringUtil {
     }
 
     /**
-     * Build the plain text from Jsoup nodes.
+     * Xây dựng văn bản thuần túy từ các nút của Jsoup.
      *
-     * <p>
-     * Reference: <a
+     * <p>Tham chiếu: <a
      * href=
      * "https://stackoverflow.com/questions/2513707/how-to-convert-html-to-text-keeping-linebreaks">...</a>
      *
-     * @param node Jsoup nodes
+     * @param node Các nút của Jsoup
      * @return StringBuffer
      */
     private static StringBuffer buildStringFromNode(Node node) {
@@ -105,18 +90,15 @@ public class StringUtil {
     }
 
     /**
-     * Count number of lines in the file `file`.
-     * 
-     * @param file the path of the file
-     * @return number of lines of the given file
-     * @throws IOException file not found or couldn't read
+     * Đếm số dòng trong file `file`.
+     *
+     * @param file đường dẫn của file
+     * @return số dòng của file được chỉ định
+     * @throws IOException file không tìm thấy hoặc không đọc được
      */
     public static int countNumLinesOfFile(String file) throws IOException {
-        BufferedReader reader = new BufferedReader(new FileReader(file));
-        int lines = 0;
-        while (reader.readLine() != null)
-            lines++;
-        reader.close();
-        return lines;
+        try (BufferedReader reader = new BufferedReader(new FileReader(file))) {
+            return Math.toIntExact(reader.lines().count());
+        }
     }
 }

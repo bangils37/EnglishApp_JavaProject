@@ -18,38 +18,29 @@ import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextArea;
+import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
 
 public class SentencesTranslating {
-    @FXML
-    private TextArea sourceText;
-    @FXML
-    private TextArea sinkText;
+    @FXML private TextArea sourceText;
+    @FXML private TextArea sinkText;
     private boolean enToVi = true;
-    @FXML
-    private Label upButton;
-    @FXML
-    private Label downButton;
-    @FXML
-    private Button translateButton;
-    @FXML
-    private Button helpButton;
-    @FXML
-    private Button dictionaryButton;
-    @FXML
-    private Button voiceButton;
-    @FXML
-    private Button alterButton;
+    @FXML private Label upButton;
+    @FXML private Label downButton;
+    @FXML private Button translateButton;
+    @FXML private Button helpButton;
+    @FXML private Button dictionaryButton;
+    @FXML private Button voiceButton;
+    @FXML private Button alterButton;
 
     private TranslationStrategy viToEnStrategy = new ViToEnTranslationStrategy();
     private TranslationStrategy enToViStrategy = new EnToViTranslationStrategy();
     private SpeakerStrategy viSpeakerStrategy = new ViSpeakerStrategy();
     private SpeakerStrategy enSpeakerStrategy = new EnSpeakerStrategy();
 
-    public SentencesTranslating() {
-    }
+    public SentencesTranslating() {}
 
     @FXML
     private void initialize() {
@@ -57,41 +48,37 @@ public class SentencesTranslating {
     }
 
     /**
-     * Prepare the icons of all the buttons based on the given `mode` (dark mode is
-     * 0 and light mode
-     * is 1).
+     * Chuẩn bị biểu tượng cho tất cả các nút dựa trên `mode` được chỉ định (dark mode là
+     * 0 và light mode
+     * là 1).
      *
-     * @param mode light mode or dark mode icons
+     * @param mode biểu tượng light mode hoặc dark mode
      */
     public void prepareButtonIcon(boolean mode) {
         String suffix = (mode ? "light" : "dark");
-        ImageView translateIcon = new ImageView("icon/translate-icon-" + suffix + ".png");
-        translateIcon.setFitHeight(36);
-        translateIcon.setFitWidth(36);
-//        ImageView helpIcon = new ImageView("icon/help-icon-" + suffix + ".png");
-//        helpIcon.setFitHeight(18);
-//        helpIcon.setFitWidth(18);
-//        ImageView dictionaryIcon = new ImageView("icon/dictionary-icon-" + suffix + ".png");
-//        dictionaryIcon.setFitHeight(18);
-//        dictionaryIcon.setFitWidth(18);
-//        ImageView voiceIcon = new ImageView("icon/voice-icon-" + suffix + ".png");
-//        voiceIcon.setFitHeight(28);
-//        voiceIcon.setFitWidth(25);
-//        ImageView alterIcon = new ImageView("icon/alter-icon-" + suffix + ".png");
-//        alterIcon.setFitHeight(18);
-//        alterIcon.setFitWidth(18);
-//
-        translateButton.setGraphic(translateIcon);
-//        helpButton.setGraphic(helpIcon);
-//        dictionaryButton.setGraphic(dictionaryIcon);
-//        voiceButton.setGraphic(voiceIcon);
-//        alterButton.setGraphic(alterIcon);
+        setButtonIcon(translateButton, "translate-icon-" + suffix + ".png", 36, 36);
+        // Đặt biểu tượng cho các nút khác nếu cần
     }
 
     /**
-     * Translate the text from English to Vietnamese (or reverse, depends on current
-     * state `enToVi`)
-     * and output the content to the sinkText.
+     * Đặt biểu tượng cho một nút.
+     *
+     * @param button     nút để đặt biểu tượng
+     * @param iconName   tên của tệp biểu tượng
+     * @param fitHeight  chiều cao để vừa với biểu tượng
+     * @param fitWidth   chiều rộng để vừa với biểu tượng
+     */
+    private void setButtonIcon(Button button, String iconName, double fitHeight, double fitWidth) {
+        ImageView icon = new ImageView(new Image("/icon/" + iconName));
+        icon.setFitHeight(fitHeight);
+        icon.setFitWidth(fitWidth);
+        button.setGraphic(icon);
+    }
+
+    /**
+     * Dịch văn bản từ tiếng Anh sang tiếng Việt (hoặc ngược lại, tùy thuộc vào trạng thái
+     * hiện tại `enToVi`)
+     * và đưa ra nội dung vào sinkText.
      */
     @FXML
     public void translateEnToVi() {
@@ -102,12 +89,52 @@ public class SentencesTranslating {
     }
 
     /**
-     * Change scene from Sentences Translator to the main Application.
+     * Chuyển đổi từ cảnh Sentences Translator về ứng dụng chính.
      *
-     * @param event action event
+     * @param event sự kiện hành động
      */
     @FXML
     public void changeToApplication(ActionEvent event) {
+        loadMainApplicationScene(event);
+    }
+
+    /**
+     * Mở (popup) một cửa sổ hiển thị hướng dẫn cách sử dụng dịch câu.
+     *
+     * @param event sự kiện hành động
+     */
+    @FXML
+    public void showSentencesInstruction(ActionEvent event) {
+        showInstructionPopup();
+    }
+
+    /**
+     * Phát âm thanh TTS của văn bản nguồn (từ tiếng Anh sang tiếng Việt hoặc ngược lại tùy thuộc vào
+     * trạng thái hiện tại
+     * `enToVi`).
+     */
+    @FXML
+    public void textToSpeech() {
+        String source = sourceText.getText();
+        (enToVi ? enSpeakerStrategy : viSpeakerStrategy).speak(source);
+    }
+
+    /**
+     * Thay đổi trạng thái hiện tại `enToVi` để chuyển đổi giữa tiếng Anh và tiếng Việt hoặc
+     * ngược lại.
+     */
+    @FXML
+    public void swapLanguage() {
+        enToVi = !enToVi;
+        updateLanguageLabels();
+    }
+
+    /**
+     * Tải cảnh chính của ứng dụng.
+     *
+     * @param event sự kiện hành động
+     */
+    private void loadMainApplicationScene(ActionEvent event) {
         try {
             Parent root = FXMLLoader.load(
                     Objects.requireNonNull(
@@ -119,11 +146,11 @@ public class SentencesTranslating {
             scene.getStylesheets()
                     .add(
                             Objects.requireNonNull(
-                                    getClass()
-                                            .getResource(
-                                                    (Application.isLightMode()
-                                                            ? "/css/Application-light.css"
-                                                            : "/css/Application-dark.css")))
+                                            getClass()
+                                                    .getResource(
+                                                            (Application.isLightMode()
+                                                                    ? "/css/Application-light.css"
+                                                                    : "/css/Application-dark.css")))
                                     .toExternalForm());
             appStage.setTitle("Dictionary");
             appStage.setScene(scene);
@@ -134,13 +161,9 @@ public class SentencesTranslating {
     }
 
     /**
-     * Open (popup) a window showing instruction on how to use the sentence
-     * translator.
-     *
-     * @param event action event
+     * Hiển thị cửa sổ hướng dẫn popup.
      */
-    @FXML
-    public void showSentencesInstruction(ActionEvent event) {
+    private void showInstructionPopup() {
         try {
             Parent root = FXMLLoader.load(
                     Objects.requireNonNull(
@@ -149,14 +172,14 @@ public class SentencesTranslating {
                                     .getResource(
                                             "fxml/SentencesTranslatingInstructionPopup.fxml")));
             Stage senInsStage = new Stage();
-            Stage appStage = (Stage) ((Node) event.getSource()).getScene().getWindow();
+            Stage appStage = (Stage) translateButton.getScene().getWindow();
             senInsStage.initOwner(appStage);
             Scene scene = new Scene(root);
             if (!Application.isLightMode()) {
                 scene.getStylesheets()
                         .add(
                                 Objects.requireNonNull(
-                                        getClass().getResource("/css/General-dark.css"))
+                                                getClass().getResource("/css/General-dark.css"))
                                         .toExternalForm());
             }
             senInsStage.setTitle("Hướng dẫn sử dụng");
@@ -170,24 +193,9 @@ public class SentencesTranslating {
     }
 
     /**
-     * Play sound TTS the source text (English to Vietnamese or reverse depends on
-     * current state
-     * `enToVi`).
+     * Cập nhật nhãn ngôn ngữ dựa trên cài đặt ngôn ngữ hiện tại.
      */
-    @FXML
-    public void textToSpeech() {
-        String source = sourceText.getText();
-        (enToVi ? enSpeakerStrategy : viSpeakerStrategy).speak(source);
-    }
-
-    /**
-     * Change the current state `enToVi` to switch between English to Vietnamese or
-     * Vietnamese to
-     * English.
-     */
-    @FXML
-    public void swapLanguage() {
-        enToVi = !enToVi;
+    private void updateLanguageLabels() {
         if (enToVi) {
             upButton.setText("English");
             downButton.setText("Vietnamese");

@@ -23,67 +23,58 @@ public class EditDefinition {
         EditDefinition.editingWord = editingWord;
     }
 
-    /** Set label text and set the current definition of the editing word. */
+    /** Đặt văn bản cho nhãn và đặt định nghĩa hiện tại của từ đang chỉnh sửa. */
     @FXML
     private void initialize() {
         editLabel.setText("Chỉnh sửa giải nghĩa của từ `" + editingWord + "`");
+        setHtmlEditorText();
+    }
+
+    /**
+     * Đặt văn bản HTML của trình soạn thảo dựa trên định nghĩa hiện tại của từ đang chỉnh sửa và chế độ ứng dụng.
+     */
+    private void setHtmlEditorText() {
+        String currentDefinition = dictionary.lookUpWord(editingWord);
         if (!Application.isLightMode()) {
-            htmlEditor.setHtmlText(
-                    "<body style='background-color: #262837; color: #babccf'>"
-                            + dictionary.lookUpWord(editingWord)
-                            + "</body>");
+            htmlEditor.setHtmlText("<body style='background-color: #262837; color: #babccf'>" + currentDefinition + "</body>");
         } else {
-            htmlEditor.setHtmlText(dictionary.lookUpWord(editingWord));
+            htmlEditor.setHtmlText(currentDefinition);
         }
     }
 
     /**
-     * Save the new definition for the editing word in HTML format.
+     * Lưu định nghĩa mới cho từ đang chỉnh sửa dưới dạng HTML.
      *
-     * @param event action event
+     * @param event sự kiện
      */
     @FXML
     public void saveDefinition(ActionEvent event) {
         byte[] ptext = htmlEditor.getHtmlText().getBytes(StandardCharsets.ISO_8859_1);
         String definition = new String(ptext, StandardCharsets.UTF_8);
-        definition =
-                definition.replace(
-                        "<html dir=\"ltr\"><head></head><body contenteditable=\"true\">", "");
-        definition = definition.replace("</body></html>", "");
+        definition = definition.replaceAll("<html dir=\"ltr\"><head></head><body contenteditable=\"true\">|</body></html>", "");
         definition = definition.replace("\"", "'");
         if (dictionary.updateWordDefinition(editingWord, definition)) {
-            Alert alert = new Alert(AlertType.INFORMATION);
-            setAlertCss(alert);
-            alert.setTitle("Thông báo");
-            alert.setContentText("Cập nhật giải nghĩa của từ `" + editingWord + "` thành công!");
-            alert.show();
+            showAlert("Thông báo", "Cập nhật giải nghĩa của từ `" + editingWord + "` thành công!", AlertType.INFORMATION);
         } else {
-            Alert alert = new Alert(AlertType.ERROR);
-            setAlertCss(alert);
-            alert.setTitle("Lỗi");
-            alert.setContentText(
-                    "Cập nhật giải nghĩa của từ `" + editingWord + "` không thành công!");
-            alert.show();
+            showAlert("Lỗi", "Cập nhật giải nghĩa của từ `" + editingWord + "` không thành công!", AlertType.ERROR);
         }
-        Stage stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
-        stage.close();
+        closeWindow(event);
     }
 
     /**
-     * Quit the editing window.
+     * Đóng cửa sổ chỉnh sửa.
      *
-     * @param event action event
+     * @param event sự kiện
      */
     @FXML
     public void quitWindow(ActionEvent event) {
-        Stage stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
-        stage.close();
+        closeWindow(event);
     }
 
     /**
-     * Set CSS for alert box in case of dark mode.
+     * Thiết lập CSS cho hộp thoại cảnh báo trong trường hợp chế độ tối.
      *
-     * @param alert alert
+     * @param alert hộp thoại cảnh báo
      */
     private void setAlertCss(Alert alert) {
         if (!Application.isLightMode()) {
@@ -95,5 +86,30 @@ public class EditDefinition {
                                     .toExternalForm());
             dialogPane.getStyleClass().add("alert");
         }
+    }
+
+    /**
+     * Hiển thị một cảnh báo với tiêu đề, nội dung và loại cảnh báo cụ thể.
+     *
+     * @param title   tiêu đề của cảnh báo
+     * @param content nội dung của cảnh báo
+     * @param type    loại của cảnh báo
+     */
+    private void showAlert(String title, String content, AlertType type) {
+        Alert alert = new Alert(type);
+        setAlertCss(alert);
+        alert.setTitle(title);
+        alert.setContentText(content);
+        alert.show();
+    }
+
+    /**
+     * Đóng cửa sổ.
+     *
+     * @param event sự kiện
+     */
+    private void closeWindow(ActionEvent event) {
+        Stage stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
+        stage.close();
     }
 }
