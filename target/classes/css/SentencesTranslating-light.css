@@ -3,16 +3,16 @@
 }
 
 * {
-    -fx-text-fill: #FFFFFF;
+    -fx-text-fill: #000000;
     -fx-font-family: "Paytone One";
 }
 
 #anchorPane {
-    -fx-background-color: #080B35;
+    -fx-background-color: #27C6E6;
 }
 
 #task_bar {
-    -fx-background-color: #04031C;
+    -fx-background-color: #0F52BB;
 }
 
 #upButton {
@@ -24,22 +24,22 @@
 
 .text-area,
 .text-area .content {
-   -fx-background-color: #1D3C69;
+   -fx-background-color: #D2F6F7;
 }
 
 .text-area:focused,
 .text-area:focused .content {
-   -fx-background-color: #1D3C69;
+   -fx-background-color: #D2F6F7;
 }
 
 .button {
-    -fx-background-color: #152A5D;
+    -fx-background-color: #439AE6;
     -fx-text-fill: #ffffff;
     -fx-background-radius: 30;
 }
 
 .button:hover {
-    -fx-background-color: #525874;
+    -fx-background-color: #0081FF;
 }
 
 .button:focused {
@@ -58,13 +58,13 @@
 }
 
 #iconButton{
-    -fx-background-color: #04031C;
+    -fx-background-color: #0F52BB;
 }
 #iconButton1{
-    -fx-background-color: #04031C;
+    -fx-background-color: #0F52BB;
 }
 #iconButton2{
-    -fx-background-color: #04031C;
+    -fx-background-color: #0F52BB;
 }
 
 .scroll-bar:vertical {

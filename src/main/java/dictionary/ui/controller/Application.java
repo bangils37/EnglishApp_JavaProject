@@ -12,6 +12,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Objects;
 import java.util.Optional;
+
 import javafx.application.Platform;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
@@ -383,6 +384,14 @@ public class Application {
                                         getClass()
                                                 .getResource(
                                                         "/css/SentencesTranslating-dark.css"))
+                                        .toExternalForm());
+            } else {
+                scene.getStylesheets()
+                        .add(
+                                Objects.requireNonNull(
+                                                getClass()
+                                                        .getResource(
+                                                                "/css/SentencesTranslating-light.css"))
                                         .toExternalForm());
             }
             appStage.setTitle("Sentences Translator");
