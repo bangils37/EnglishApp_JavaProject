@@ -1,39 +1,34 @@
 package dictionary.ui;
 
-import java.io.File;
 import javafx.stage.DirectoryChooser;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
 
+import java.io.File;
+
 public class HelperUI {
-    static final FileChooser fileChooser = new FileChooser();
-    static final DirectoryChooser dirChooser = new DirectoryChooser();
+    private static final FileChooser fileChooser = new FileChooser();
+    private static final DirectoryChooser dirChooser = new DirectoryChooser();
 
     /**
-     * Use FileChooser to open a popup window to choose the file.
+     * Mở cửa sổ chọn file để chọn một tập tin.
      *
-     * @param stage the stage to open the FileChooser from
-     * @return path of the chosen file
+     * @param stage sân khấu để mở FileChooser từ
+     * @return đường dẫn của tập tin đã chọn, hoặc chuỗi rỗng nếu không chọn tập tin nào
      */
     public static String chooseFile(Stage stage) {
         File file = fileChooser.showOpenDialog(stage);
-        if (file != null) {
-            return file.getAbsolutePath();
-        }
-        return "";
+        return file != null ? file.getAbsolutePath() : "";
     }
 
     /**
-     * Use DirectoryChooser to open a popup window to choose the directory.
+     * Mở cửa sổ chọn thư mục để chọn một thư mục.
      *
-     * @param stage the stage to open the DirectoryChooser from
-     * @return path of the chosen directory
+     * @param stage sân khấu để mở DirectoryChooser từ
+     * @return đường dẫn của thư mục đã chọn, hoặc chuỗi rỗng nếu không chọn thư mục nào
      */
     public static String chooseDir(Stage stage) {
         File dir = dirChooser.showDialog(stage);
-        if (dir != null) {
-            return dir.getAbsolutePath();
-        }
-        return "";
+        return dir != null ? dir.getAbsolutePath() : "";
     }
 }

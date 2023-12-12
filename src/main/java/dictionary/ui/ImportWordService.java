@@ -11,8 +11,8 @@ public class ImportWordService extends Service<Void> {
     }
 
     /**
-     * Create and return the task for fetching the data. Note that this method is called on the
-     * background thread (all other code in this application is on the JavaFX Application Thread!).
+     * Tạo và trả về nhiệm vụ để lấy dữ liệu. Lưu ý rằng phương thức này được gọi trên
+     * luồng nền (tất cả các mã khác trong ứng dụng này đều chạy trên Luồng Ứng dụng JavaFX!).
      */
     @Override
     protected Task<Void> createTask() {

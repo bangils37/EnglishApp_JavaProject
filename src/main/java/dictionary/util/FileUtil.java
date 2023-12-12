@@ -7,43 +7,46 @@ import java.io.IOException;
 import java.io.OutputStreamWriter;
 import java.io.Writer;
 import java.nio.charset.StandardCharsets;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 public class FileUtil {
 
+    private static final Logger logger = Logger.getLogger(FileUtil.class.getName());
+
     /**
-     * Create directory if not exists.
-     * 
-     * @param directory
+     * Tạo thư mục nếu chưa tồn tại.
+     *
+     * @param directory thư mục
      */
     public static void createDirectoryIfNotExists(File directory) {
         if (!directory.exists() && !directory.mkdirs()) {
-            System.out.println("Failed to create directory: " + directory.getPath());
+            logger.log(Level.WARNING, "Không thể tạo thư mục: {0}", directory.getPath());
         }
     }
 
     /**
-     * Create file if not exists.
-     * 
-     * @param file
+     * Tạo file nếu chưa tồn tại.
+     *
+     * @param file file
      */
     public static void createFileIfNotExists(File file) {
         if (!file.exists()) {
             try {
                 if (!file.createNewFile()) {
-                    System.out.println("Failed to create file: " + file.getPath());
+                    logger.log(Level.WARNING, "Không thể tạo file: {0}", file.getPath());
                 }
             } catch (IOException e) {
-                e.printStackTrace();
-                System.out.println("Failed to create file: " + file.getPath());
+                logger.log(Level.SEVERE, "Không thể tạo file: " + file.getPath(), e);
             }
         }
     }
 
     /**
-     * Write content to file.
-     * 
-     * @param filePath path to the file
-     * @param content  content to write
+     * Ghi nội dung vào file.
+     *
+     * @param filePath đường dẫn đến file
+     * @param content  nội dung cần ghi
      */
     public static void writeToFile(String filePath, String content) {
         try (Writer out = new BufferedWriter(
@@ -52,8 +55,7 @@ public class FileUtil {
                         StandardCharsets.UTF_8))) {
             out.write(content);
         } catch (IOException e) {
-            e.printStackTrace();
-            System.out.println("An error occurred while writing to file: " + filePath);
+            logger.log(Level.SEVERE, "Có lỗi xảy ra khi ghi vào file: " + filePath, e);
         }
     }
 }

@@ -26,10 +26,10 @@ public class ImportWordTask extends Task<Void> {
     }
 
     /**
-     * Import words to dictionary from `file`. Update the progress bar at the same
-     * time.
+     * Nhập các từ vào từ điển từ `file`. Cập nhật thanh tiến trình trong quá trình
+     * thực hiện.
      *
-     * @return nothing
+     * @return không có gì
      */
     @Override
     protected Void call() {
@@ -37,108 +37,103 @@ public class ImportWordTask extends Task<Void> {
             BufferedReader in = new BufferedReader(
                     new InputStreamReader(
                             new FileInputStream(file), StandardCharsets.UTF_8));
-            String inputLine;
             numWords = StringUtil.countNumLinesOfFile(file);
-            int counter = 0;
-            while ((inputLine = in.readLine()) != null) {
-                if (isCancelled()) {
-                    in.close();
-                    return null;
-                }
-                int pos = inputLine.indexOf("\t");
-                if (pos == -1) {
-                    continue;
-                }
-                String target = inputLine.substring(0, pos).strip();
-                String definition = inputLine.substring(pos + 1).strip();
-                counter++;
-                if (App.dictionary.insertWord(target, definition)) {
-                    System.out.println("Inserted: " + target);
-                    numWordsInserted++;
-                }
-                if (counter % 5 == 0) {
-                    updateProgress(counter, numWords);
-                }
-            }
+            importWords(in);
             in.close();
         } catch (FileNotFoundException e) {
-            e.printStackTrace();
-            Alert alert = new Alert(AlertType.ERROR);
-            setAlertCss(alert);
-            alert.setTitle("Lỗi");
-            alert.setContentText("Không tìm thấy đường dẫn của file `" + file + "`!");
-            alert.show();
+            handleFileNotFoundError();
         } catch (IOException e) {
-            e.printStackTrace();
-            Alert alert = new Alert(AlertType.ERROR);
-            setAlertCss(alert);
-            alert.setTitle("Lỗi");
-            alert.setContentText("Không đọc được file `" + file + "`!");
-            alert.show();
+            handleFileReadError();
         }
         return null;
     }
 
-    /**
-     * Popup a successful information box indicating the task has been successfully
-     * executed.
-     */
-    @Override
-    protected void succeeded() {
-        Alert alert = new Alert(AlertType.INFORMATION);
-        setAlertCss(alert);
-        alert.setTitle("Thông báo");
-        String content = "Thành công thêm "
-                + numWordsInserted
-                + "/"
-                + numWords
-                + " từ vào từ điển.\nCó "
-                + (numWords - numWordsInserted)
-                + " từ không được thêm vào từ điển\n(bị gián đoạn, lỗi format hoặc từ đã tồn tại).";
-        alert.setContentText(content);
-        alert.show();
+    private void importWords(BufferedReader in) throws IOException {
+        String inputLine;
+        int counter = 0;
+        while ((inputLine = in.readLine()) != null) {
+            if (isCancelled()) {
+                return;
+            }
+            processInputLine(inputLine);
+            counter++;
+            if (counter % 5 == 0) {
+                updateProgress(counter, numWords);
+            }
+        }
     }
 
-    /** Popup a warning box for closing the stage while importing words. */
-    @Override
-    protected void cancelled() {
-        Alert alert = new Alert(AlertType.WARNING);
-        setAlertCss(alert);
-        alert.setTitle("Thông báo");
-        String content = "Quá trình nhập từ file bị gián đoạn.\n"
-                + "Thành công thêm "
-                + numWordsInserted
-                + "/"
-                + numWords
-                + " từ vào từ điển.\nCó "
-                + (numWords - numWordsInserted)
-                + " từ không được thêm vào từ điển\n(bị gián đoạn, lỗi format hoặc từ đã tồn tại).";
-        alert.setContentText(content);
-        alert.show();
+    private void processInputLine(String inputLine) {
+        int pos = inputLine.indexOf("\t");
+        if (pos != -1) {
+            String target = inputLine.substring(0, pos).strip();
+            String definition = inputLine.substring(pos + 1).strip();
+            tryInsertWord(target, definition);
+        }
     }
 
-    /** Popup an error box indicating error found while importing the words. */
-    @Override
-    protected void failed() {
+    private void tryInsertWord(String target, String definition) {
+        if (App.dictionary.insertWord(target, definition)) {
+            System.out.println("Inserted: " + target);
+            numWordsInserted++;
+        }
+    }
+
+    private void handleFileNotFoundError() {
+        showErrorAlert("Không tìm thấy đường dẫn của file `" + file + "`!");
+    }
+
+    private void handleFileReadError() {
+        showErrorAlert("Không đọc được file `" + file + "`!");
+    }
+
+    private void showErrorAlert(String content) {
         Alert alert = new Alert(AlertType.ERROR);
         setAlertCss(alert);
         alert.setTitle("Lỗi");
-        String content = "Quá trình nhập từ file gặp lỗi.\n"
-                + "Thành công thêm "
-                + numWordsInserted
+        alert.setContentText(content);
+        alert.show();
+    }
+
+    /**
+     * Hiển thị hộp thoại thông báo thành công khi công việc được thực hiện thành công.
+     */
+    @Override
+    protected void succeeded() {
+        showAlert(AlertType.INFORMATION, "Thành công thêm ", numWordsInserted, numWords);
+    }
+
+    /** Hiển thị hộp thoại cảnh báo khi đóng cửa sổ trong khi đang nhập từ. */
+    @Override
+    protected void cancelled() {
+        showAlert(AlertType.WARNING, "Quá trình nhập từ file bị gián đoạn.\n", numWordsInserted, numWords);
+    }
+
+    /** Hiển thị hộp thoại lỗi khi có lỗi trong quá trình nhập từ. */
+    @Override
+    protected void failed() {
+        showAlert(AlertType.ERROR, "Quá trình nhập từ file gặp lỗi.\n", numWordsInserted, numWords);
+    }
+
+    private void showAlert(AlertType alertType, String prefix, int numInserted, int total) {
+        Alert alert = new Alert(alertType);
+        setAlertCss(alert);
+        alert.setTitle("Thông báo");
+        String content = prefix
+                + numInserted
                 + "/"
-                + numWords
+                + total
                 + " từ vào từ điển.\nCó "
-                + (numWords - numWordsInserted)
+                + (total - numInserted)
                 + " từ không được thêm vào từ điển\n(bị gián đoạn, lỗi format hoặc từ đã tồn tại).";
         alert.setContentText(content);
         alert.show();
     }
 
     /**
-     * Set CSS for alert box in case of dark mode.
+     * Set CSS cho hộp thoại thông báo trong trường hợp chế độ tối.
      *
-     * @param alert alert
+     * @param alert hộp thoại thông báo
      */
     private void setAlertCss(Alert alert) {
         if (!Application.isLightMode()) {

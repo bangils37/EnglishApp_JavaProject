@@ -21,12 +21,12 @@
 }
 
 .list-cell:even {
-    -fx-background-color: #D2F6F7;
+    -fx-background-color: #B0EEF4;
     -fx-font-size: 14px;
 }
 
 .list-cell:focused {
-    -fx-background-color: #D2F6F7;
+    -fx-background-color: #51E0ED;
     -fx-font-size: 14px;
 }
 
