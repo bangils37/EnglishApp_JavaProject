@@ -14,8 +14,8 @@ import java.nio.charset.StandardCharsets;
 import java.util.Objects;
 import javafx.concurrent.Task;
 import javafx.scene.control.Alert;
-import javafx.scene.control.Alert.AlertType;
 import javafx.scene.control.DialogPane;
+import javafx.scene.control.Alert.AlertType;
 
 public class ImportWordTask extends Task<Void> {
     private final String file;
@@ -26,127 +26,132 @@ public class ImportWordTask extends Task<Void> {
         this.file = file;
     }
 
-    /**
-     * Nhập các từ vào từ điển từ `file`. Cập nhật thanh tiến trình trong quá trình
-     * thực hiện.
-     *
-     * @return không có gì
-     */
     @Override
     protected Void call() {
         try {
-            BufferedReader in = new BufferedReader(
-                    new InputStreamReader(
-                            new FileInputStream(file), StandardCharsets.UTF_8));
+            BufferedReader in = createBufferedReader();
             numWords = StringUtil.countNumLinesOfFile(file);
             importWords(in);
             in.close();
         } catch (FileNotFoundException e) {
-            handleFileNotFoundError();
+            handleFileError("Không tìm thấy đường dẫn của file `" + file + "`!");
         } catch (IOException e) {
-            handleFileReadError();
+            handleFileError("Không đọc được file `" + file + "`!");
         }
         return null;
     }
 
+    private BufferedReader createBufferedReader() throws FileNotFoundException {
+        return new BufferedReader(new InputStreamReader(new FileInputStream(file), StandardCharsets.UTF_8));
+    }
+
     private void importWords(BufferedReader in) throws IOException {
-        String inputLine;
         int counter = 0;
-        while ((inputLine = in.readLine()) != null) {
-            if (isCancelled()) {
-                return;
-            }
-            processInputLine(inputLine);
+        while (readAndProcessInputLine(in, counter)) {
             counter++;
-            System.out.println(counter);
-            if (counter % 5 == 0) {
-                updateProgress(counter, numWords);
-            }
+            handleCounterUpdate(counter);
         }
     }
 
-    private void processInputLine(String inputLine) {
+    private boolean readAndProcessInputLine(BufferedReader in, int counter) throws IOException {
+        String inputLine = in.readLine();
+        return inputLine != null && !isCancelled() && processInputLine(inputLine);
+    }
+
+    private boolean processInputLine(String inputLine) {
         int pos = inputLine.indexOf(":");
         if (pos != -1) {
-            String target = inputLine.substring(0, pos).strip();
-            String definition = inputLine.substring(pos + 1).strip();
-            tryInsertWord(target, definition);
+            String target = extractTarget(inputLine, pos);
+            String definition = extractDefinition(inputLine, pos);
+            return tryInsertWord(target, definition);
         }
+        return true;
     }
 
-    private void tryInsertWord(String target, String definition) {
+    private String extractTarget(String inputLine, int pos) {
+        return inputLine.substring(0, pos).strip();
+    }
+
+    private String extractDefinition(String inputLine, int pos) {
+        return inputLine.substring(pos + 1).strip();
+    }
+
+    private boolean tryInsertWord(String target, String definition) {
         if (App.dictionary.insertWord(target, definition)) {
             Trie.getInstance().insert(target);
-            System.out.println("Inserted: " + target);
-            numWordsInserted++;
+            handleWordInsertionSuccess(target);
+            return true;
+        }
+        return false;
+    }
+
+    private void handleWordInsertionSuccess(String target) {
+        System.out.println("Inserted: " + target);
+        numWordsInserted++;
+    }
+
+    private void handleCounterUpdate(int counter) {
+        System.out.println(counter);
+        if (counter % 5 == 0) {
+            updateProgress(counter, numWords);
         }
     }
 
-    private void handleFileNotFoundError() {
-        showErrorAlert("Không tìm thấy đường dẫn của file `" + file + "`!");
+    private void handleFileError(String content) {
+        showErrorAlert("Lỗi", content);
     }
 
-    private void handleFileReadError() {
-        showErrorAlert("Không đọc được file `" + file + "`!");
+    private void showErrorAlert(String title, String content) {
+        Alert alert = createErrorAlert(title, content);
+        alert.show();
     }
 
-    private void showErrorAlert(String content) {
+    private Alert createErrorAlert(String title, String content) {
         Alert alert = new Alert(AlertType.ERROR);
         setAlertCss(alert);
-        alert.setTitle("Lỗi");
+        alert.setTitle(title);
         alert.setContentText(content);
-        alert.show();
+        return alert;
     }
 
-    /**
-     * Hiển thị hộp thoại thông báo thành công khi công việc được thực hiện thành
-     * công.
-     */
     @Override
     protected void succeeded() {
-        showAlert(AlertType.INFORMATION, "Thành công thêm ", numWordsInserted, numWords);
+        showSuccessAlert();
     }
 
-    /** Hiển thị hộp thoại cảnh báo khi đóng cửa sổ trong khi đang nhập từ. */
+    private void showSuccessAlert() {
+        showAlert(AlertType.INFORMATION, "Thông báo", "Thành công thêm ", numWordsInserted, numWords);
+    }
+
     @Override
     protected void cancelled() {
-        showAlert(AlertType.WARNING, "Quá trình nhập từ file bị gián đoạn.\n", numWordsInserted, numWords);
+        showAlert(AlertType.WARNING, "Thông báo", "Quá trình nhập từ file bị gián đoạn.\n", numWordsInserted, numWords);
     }
 
-    /** Hiển thị hộp thoại lỗi khi có lỗi trong quá trình nhập từ. */
     @Override
     protected void failed() {
-        showAlert(AlertType.ERROR, "Quá trình nhập từ file gặp lỗi.\n", numWordsInserted, numWords);
+        showAlert(AlertType.ERROR, "Thông báo", "Quá trình nhập từ file gặp lỗi.\n", numWordsInserted, numWords);
     }
 
-    private void showAlert(AlertType alertType, String prefix, int numInserted, int total) {
-        Alert alert = new Alert(alertType);
-        setAlertCss(alert);
-        alert.setTitle("Thông báo");
-        String content = prefix
-                + numInserted
-                + "/"
-                + total
-                + " từ vào từ điển.\nCó "
-                + (total - numInserted)
-                + " từ không được thêm vào từ điển\n(bị gián đoạn, lỗi format hoặc từ đã tồn tại).";
-        alert.setContentText(content);
+    private void showAlert(AlertType alertType, String title, String prefix, int numInserted, int total) {
+        Alert alert = createInfoAlert(alertType, title, prefix, numInserted, total);
         alert.show();
     }
 
-    /**
-     * Set CSS cho hộp thoại thông báo trong trường hợp chế độ tối.
-     *
-     * @param alert hộp thoại thông báo
-     */
+    private Alert createInfoAlert(AlertType alertType, String title, String prefix, int numInserted, int total) {
+        Alert alert = new Alert(alertType);
+        setAlertCss(alert);
+        alert.setTitle(title);
+        String content = prefix + numInserted + "/" + total + " từ vào từ điển.\nCó "
+                + (total - numInserted) + " từ không được thêm vào từ điển\n(bị gián đoạn, lỗi format hoặc từ đã tồn tại).";
+        alert.setContentText(content);
+        return alert;
+    }
+
     private void setAlertCss(Alert alert) {
         if (!Application.isLightMode()) {
             DialogPane dialogPane = alert.getDialogPane();
-            dialogPane
-                    .getStylesheets()
-                    .add(
-                            Objects.requireNonNull(getClass().getResource("/css/Alert-dark.css"))
-                                    .toExternalForm());
+            dialogPane.getStylesheets().add(Objects.requireNonNull(getClass().getResource("/css/Alert-dark.css")).toExternalForm());
             dialogPane.getStyleClass().add("alert");
         }
     }
