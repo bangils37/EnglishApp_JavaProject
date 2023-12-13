@@ -13,10 +13,10 @@ Dictionary application (English to Vietnamese) for INT2204_2 OOP Course written 
 - [Construction Tree](#tree)
 
 ## Authors
-
-- [Nguyễn Bằng Anh](https://github.com/bangils37) - 21020007
-- [Nguyễn Quang Ninh](https://github.com/qninhdt) - 22021166 
-- [Lưu Huy Thành](https://github.com/luuhuythanh0111) - 22021124
+- Nhóm số 3 - INT2204_2 OOP:
+    - [Nguyễn Bằng Anh](https://github.com/bangils37) - 21020007
+    - [Nguyễn Quang Ninh](https://github.com/qninhdt) - 22021166 
+    - [Lưu Huy Thành](https://github.com/luuhuythanh0111) - 22021124
 
 ## Preview
 
