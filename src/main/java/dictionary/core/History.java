@@ -2,7 +2,6 @@ package dictionary.core;
 
 import java.io.File;
 import java.util.List;
-
 import dictionary.util.FileUtil;
 
 public class History {
@@ -29,14 +28,20 @@ public class History {
      * Tải lịch sử tìm kiếm vào danh sách `historySearch`.
      */
     public void loadHistory() {
+        createHistoryDirectoryAndFile();
+        loadHistoryFromFile(Config.HISTORY_FILE_PATH);
+        refactorHistory();
+    }
+
+    /**
+     * Tạo thư mục và tệp lịch sử nếu chưa tồn tại.
+     */
+    private void createHistoryDirectoryAndFile() {
         File directory = new File(Config.HISTORY_DIRECTORY_PATH);
         FileUtil.createDirectoryIfNotExists(directory);
 
         File historyFile = new File(Config.HISTORY_FILE_PATH);
         FileUtil.createFileIfNotExists(historyFile);
-
-        loadHistoryFromFile(Config.HISTORY_FILE_PATH);
-        refactorHistory();
     }
 
     public void removeWordFromHistory(String target) {
@@ -52,7 +57,7 @@ public class History {
 
     /**
      * Thêm một từ vào lịch sử tìm kiếm History.
-     * 
+     *
      * @param target từ cần thêm
      */
     public void addWordToHistory(String target) {
@@ -65,13 +70,19 @@ public class History {
      * Xuất lịch sử tìm kiếm ra tệp đã lưu.
      */
     public void exportHistory() {
-        StringBuilder content = new StringBuilder();
+        String content = buildHistoryContent();
+        FileUtil.writeToFile(Config.HISTORY_FILE_PATH, content);
+    }
 
+    /**
+     * Tạo nội dung của lịch sử tìm kiếm.
+     */
+    private String buildHistoryContent() {
+        StringBuilder content = new StringBuilder();
         for (String target : historySearch) {
             content.append(target).append("\n");
         }
-
-        FileUtil.writeToFile(Config.HISTORY_FILE_PATH, content.toString());
+        return content.toString();
     }
 
     /**
