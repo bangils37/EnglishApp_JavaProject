@@ -83,6 +83,10 @@
     -fx-background-radius: 30 0 0 30;
 }
 
+#gameButton{
+    -fx-background-radius: 30 0 0 30;
+}
+
 #google_iconButton{
     -fx-background-color: #04031C;
 }
@@ -100,6 +104,10 @@
 }
 
 #showInformation_iconButton{
+    -fx-background-color: #04031C;
+}
+
+#game_iconButton{
     -fx-background-color: #04031C;
 }
 

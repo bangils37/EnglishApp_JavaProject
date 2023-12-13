@@ -336,6 +336,12 @@ public class Application {
         }
     }
 
+    @FXML
+    public void changeToGame(ActionEvent event)
+    {
+        // Thành code chuyển scene game ở đây nhá
+    }
+
     /**
      * Change scene to sentences translating (Google Translate).
      *
