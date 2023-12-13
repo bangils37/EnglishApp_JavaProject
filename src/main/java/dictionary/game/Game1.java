@@ -37,6 +37,12 @@ public class Game1 {
     ImageView animationView;
 
     @FXML
+    ImageView animationNariRun;
+
+    @FXML
+    ImageView attackView;
+
+    @FXML
     Button playAnimationButton, stopAnimationButton;
 
     Button correctButton;
@@ -54,7 +60,7 @@ public class Game1 {
 
     @FXML
     void playAnim(ActionEvent event) {
-        animationPanel = new AnimationPanel(animationView);
+        animationPanel = new AnimationPanel(animationView, animationNariRun,attackView);
         animationPanel.startAnimationThread();
         playAnimationButton.setVisible(false);
         stopAnimationButton.setVisible(true);
@@ -120,7 +126,7 @@ public class Game1 {
 
         definition = bffDefinition.toString();
 
-        String htmlContent = String.format("<html><body style='background: linear-gradient(to bottom right, #3498db, #6A5ACD); color: #ffffff'>" +
+        String htmlContent = String.format("<html><body style='background: #152A5D; color: #ffffff'>" +
                 "<div style='border-radius: 20px; padding: 10px;'>%s</div>" + "</body></html>", definition);
 
         webView.getEngine().loadContent(definition, "text/html");

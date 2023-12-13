@@ -72,8 +72,26 @@
             <TextField fx:id="DtextField" editable="false" styleClass="text" />
          </graphic>
       </Button>
-      <ImageView fx:id="animationView" fitHeight="191.0" fitWidth="228.0" layoutX="496.0" layoutY="401.0" pickOnBounds="true" preserveRatio="true" />
+      <ImageView fx:id="animationView" fitHeight="191.0" fitWidth="228.0" layoutX="528.0" layoutY="404.0" pickOnBounds="true" preserveRatio="true">
+         <image>
+            <Image url="@../animation/victory/tile000.png" />
+         </image></ImageView>
       <Button fx:id="playAnimationButton" layoutX="564.0" layoutY="351.0" mnemonicParsing="false" onAction="#playAnim" text="Turn on Anim" />
       <Button fx:id="stopAnimationButton" layoutX="564.0" layoutY="351.0" mnemonicParsing="false" onAction="#stopAnim" text="Turn off Anim" visible="false" />
+      <ImageView fx:id="animationNariRun" fitHeight="127.0" fitWidth="138.0" layoutX="1123.0" layoutY="548.0" pickOnBounds="true" preserveRatio="true">
+         <image>
+            <Image url="@../animation/nariRun/run1_1.png" />
+         </image>
+      </ImageView>
+      <ImageView fitHeight="127.0" fitWidth="50.0" layoutX="931.0" layoutY="208.0" pickOnBounds="true" preserveRatio="true">
+         <image>
+            <Image url="@../animation/nariRun/jump.png" />
+         </image>
+      </ImageView>
+      <ImageView fx:id="attackView" fitHeight="213.0" fitWidth="224.0" layoutX="912.0" layoutY="462.0" pickOnBounds="true" preserveRatio="true">
+         <image>
+            <Image url="@../animation/attack/attack0_1.png" />
+         </image>
+      </ImageView>
    </children>
 </AnchorPane>
