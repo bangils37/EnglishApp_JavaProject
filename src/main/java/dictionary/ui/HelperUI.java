@@ -7,6 +7,7 @@ import javafx.stage.Stage;
 import java.io.File;
 
 public class HelperUI {
+
     private static final FileChooser fileChooser = new FileChooser();
     private static final DirectoryChooser dirChooser = new DirectoryChooser();
 
@@ -17,8 +18,7 @@ public class HelperUI {
      * @return đường dẫn của tập tin đã chọn, hoặc chuỗi rỗng nếu không chọn tập tin nào
      */
     public static String chooseFile(Stage stage) {
-        File file = fileChooser.showOpenDialog(stage);
-        return file != null ? file.getAbsolutePath() : "";
+        return chooseFileOrDir(stage, true);
     }
 
     /**
@@ -28,7 +28,26 @@ public class HelperUI {
      * @return đường dẫn của thư mục đã chọn, hoặc chuỗi rỗng nếu không chọn thư mục nào
      */
     public static String chooseDir(Stage stage) {
-        File dir = dirChooser.showDialog(stage);
-        return dir != null ? dir.getAbsolutePath() : "";
+        return chooseFileOrDir(stage, false);
+    }
+
+    /**
+     * Hiển thị hộp thoại chọn file hoặc thư mục.
+     *
+     * @param stage     sân khấu để mở FileChooser hoặc DirectoryChooser từ
+     * @param chooseDir true nếu chọn thư mục, false nếu chọn file
+     * @return đường dẫn của file hoặc thư mục đã chọn, hoặc chuỗi rỗng nếu không chọn gì
+     */
+    private static String chooseFileOrDir(Stage stage, boolean chooseDir) {
+        File chosenFile = chooseDir ? showDirectoryDialog(stage) : showFileOpenDialog(stage);
+        return chosenFile != null ? chosenFile.getAbsolutePath() : "";
+    }
+
+    private static File showFileOpenDialog(Stage stage) {
+        return fileChooser.showOpenDialog(stage);
+    }
+
+    private static File showDirectoryDialog(Stage stage) {
+        return dirChooser.showDialog(stage);
     }
 }

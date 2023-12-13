@@ -19,7 +19,6 @@ import java.nio.charset.StandardCharsets;
 import java.util.Objects;
 
 public class AddWord {
-
     @FXML
     private Button browseButton;
 
@@ -39,17 +38,47 @@ public class AddWord {
 
     @FXML
     private void initialize() {
-        Platform.runLater(() -> browseButton.requestFocus());
+        Platform.runLater(() -> initializeBrowseButtonFocus());
 
         if (!Application.isLightMode()) {
-            htmlEditor.setHtmlText("<body style='background-color: #262837; color: #babccf'/>");
+            setDarkModeHtmlEditorStyle();
         }
     }
 
+    private void initializeBrowseButtonFocus() {
+        browseButton.requestFocus();
+    }
+
+    private void setDarkModeHtmlEditorStyle() {
+        htmlEditor.setHtmlText("<body style='background-color: #262837; color: #babccf'/>");
+    }
+
+    /**
+     * Xử lý sự kiện lưu từ vào từ điển.
+     *
+     * @param event sự kiện lưu từ
+     */
     @FXML
     public void saveWord(ActionEvent event) {
         String target = inputText.getText();
         String definition = extractDefinitionFromHtmlEditor();
+        processSaveWord(target, definition, event);
+    }
+
+    private String extractDefinitionFromHtmlEditor() {
+        String htmlText = htmlEditor.getHtmlText();
+        return htmlText.replaceAll("<html dir=\"ltr\"><head></head><body contenteditable=\"true\">|</body></html>", "")
+                .replace("\"", "'");
+    }
+
+    /**
+     * Xử lý lưu từ vào từ điển.
+     *
+     * @param target     từ cần lưu
+     * @param definition định nghĩa của từ
+     * @param event      sự kiện
+     */
+    private void processSaveWord(String target, String definition, ActionEvent event) {
         if (dictionary.insertWord(target, definition)) {
             Trie.getInstance().insert(target);
             System.out.print(Trie.getInstance().search(target).size());
@@ -60,16 +89,14 @@ public class AddWord {
         closeWindow(event);
     }
 
-    private String extractDefinitionFromHtmlEditor() {
-        String htmlText = htmlEditor.getHtmlText();
-        return htmlText.replaceAll("<html dir=\"ltr\"><head></head><body contenteditable=\"true\">|</body></html>", "")
-                .replace("\"", "'");
-    }
-
     @FXML
     public void chooseFile(ActionEvent event) {
         Stage appStage = (Stage) ((Node) event.getSource()).getScene().getWindow();
         String file = HelperUI.chooseFile(appStage);
+        updateFileLabel(file);
+    }
+
+    private void updateFileLabel(String file) {
         fileLabel.setText("  " + file);
     }
 
@@ -83,12 +110,16 @@ public class AddWord {
     public void submitImport() {
         String filePath = fileLabel.getText().strip();
         if (!filePath.isEmpty()) {
-            service = new ImportWordService(filePath);
-            Region veil = createVeil();
-            ProgressBar pBar = createProgressBar();
-            anchorPane.getChildren().addAll(veil, pBar);
-            service.start();
+            startImportService(filePath);
         }
+    }
+
+    private void startImportService(String filePath) {
+        service = new ImportWordService(filePath);
+        Region veil = createVeil();
+        ProgressBar pBar = createProgressBar();
+        anchorPane.getChildren().addAll(veil, pBar);
+        service.start();
     }
 
     @FXML
