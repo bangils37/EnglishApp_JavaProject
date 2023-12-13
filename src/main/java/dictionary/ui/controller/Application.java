@@ -343,6 +343,20 @@ public class Application {
     @FXML
     public void changeToGame(ActionEvent event) {
         // Thành code chuyển scene game ở đây nhá
+        try {
+            loadGameScene(event);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+    private void loadGameScene(ActionEvent event) throws IOException {
+        Parent root = FXMLLoader.load(getClass().getClassLoader().getResource("fxml/Game.fxml"));
+        Stage appStage = (Stage) ((Node) event.getSource()).getScene().getWindow();
+        Scene scene = new Scene(root);
+
+        appStage.setTitle("Game");
+        appStage.setScene(scene);
+        appStage.show();
     }
 
     /**
