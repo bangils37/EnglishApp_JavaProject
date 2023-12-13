@@ -45,7 +45,7 @@
          </cursor>
       </ImageView>
       <WebView fx:id="webView" disable="true" layoutX="236.0" layoutY="67.0" prefHeight="191.0" prefWidth="745.0" />
-      <Button layoutX="1166.0" layoutY="1.0" mnemonicParsing="false" onAction="#close" prefHeight="50.0" prefWidth="50.0" styleClass="highlight" text="Close" />
+      <Button layoutX="1166.0" layoutY="1.0" mnemonicParsing="false" onAction="#changeToApplication" prefHeight="50.0" prefWidth="50.0" styleClass="highlight" text="Appplication" />
       <Button fx:id="clickChange" layoutX="535.0" layoutY="289.0" mnemonicParsing="false" onAction="#clickChange" prefHeight="25.0" prefWidth="149.0" styleClass="highlight" text="Change Question" />
       <Pane layoutX="413.0" layoutY="14.0" prefHeight="25.0" prefWidth="392.0" styleClass="highlight">
          <children>
