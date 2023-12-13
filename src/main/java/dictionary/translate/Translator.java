@@ -1,15 +1,13 @@
 package dictionary.translate;
 
-import java.io.BufferedInputStream;
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
+import java.io.*;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
 
+import dictionary.core.Config;
+import javazoom.jl.decoder.JavaLayerException;
 import javazoom.jl.player.Player;
 
 /**
@@ -17,18 +15,15 @@ import javazoom.jl.player.Player;
  */
 public class Translator {
 
-    public static String TRANSLATE_API_URL = "https://translate.googleapis.com/translate_a/single?client=gtx&sl=%s&tl=%s&dt=t&q=";
-    public static String TEXT_TO_SPEECH_API_URL = "https://translate.google.com/translate_tts?ie=UTF-8&tl=%s&client=tw-ob&q=%s";
-
     private static Translator instance = null;
 
     private Translator() {
     }
 
     /**
-     * Get the instance of Translator.
+     * Lấy instance của Translator.
      *
-     * @return the instance of Translator
+     * @return instance của Translator
      */
     public static Translator getInstance() {
         if (instance == null) {
@@ -38,23 +33,45 @@ public class Translator {
     }
 
     /**
-     * Translate text from `langFrom` to `langTo`.
-     * 
-     * @param langFrom the input language (2 letters (ex: 'en'))
-     * @param langTo   the output language (2 letters (ex: 'vi'))
-     * @param text     the text to be translated
-     * @return the translation text in `langTo`
-     * @throws IOException if got errors
+     * Dịch văn bản từ `langFrom` sang `langTo`.
+     *
+     * @param langFrom ngôn ngữ đầu vào (2 ký tự (ví dụ: 'en'))
+     * @param langTo   ngôn ngữ đầu ra (2 ký tự (ví dụ: 'vi'))
+     * @param text     văn bản cần dịch
+     * @return văn bản dịch ở ngôn ngữ `langTo`
+     * @throws IOException nếu có lỗi
      */
-    public String translate(String langFrom, String langTo, String text)
-            throws IOException {
-        String url = String.format(TRANSLATE_API_URL, langFrom, langTo)
+    public String translate(String langFrom, String langTo, String text) throws IOException {
+        String url = buildTranslateUrl(langFrom, langTo, text);
+        return fetchTranslation(url);
+    }
+
+    /**
+     * Xây dựng URL của API dịch.
+     *
+     * @param langFrom ngôn ngữ đầu vào (2 ký tự (ví dụ: 'en'))
+     * @param langTo   ngôn ngữ đầu ra (2 ký tự (ví dụ: 'vi'))
+     * @param text     văn bản cần dịch
+     * @return URL đã xây dựng
+     * @throws UnsupportedEncodingException nếu encoding không được hỗ trợ
+     */
+    private String buildTranslateUrl(String langFrom, String langTo, String text) throws UnsupportedEncodingException {
+        return String.format(Config.TRANSLATE_API_URL, langFrom, langTo)
                 + URLEncoder.encode(text, StandardCharsets.UTF_8);
+    }
+
+    /**
+     * Lấy văn bản dịch từ URL đã cho.
+     *
+     * @param url URL để lấy văn bản dịch từ
+     * @return văn bản dịch
+     * @throws IOException nếu có lỗi trong quá trình yêu cầu HTTP
+     */
+    private String fetchTranslation(String url) throws IOException {
         URL obj = new URL(url);
 
         try (BufferedInputStream in = new BufferedInputStream(obj.openStream())) {
-            BufferedReader reader = new BufferedReader(
-                    new InputStreamReader(in, StandardCharsets.UTF_8));
+            BufferedReader reader = new BufferedReader(new InputStreamReader(in, StandardCharsets.UTF_8));
             StringBuilder out = new StringBuilder();
             String line;
             while ((line = reader.readLine()) != null) {
@@ -65,23 +82,59 @@ public class Translator {
     }
 
     /**
-     * Convert text to speech.
-     * 
-     * @param lang the language (2 letters (ex: 'en'))
-     * @param text the text to be converted to speech
+     * Chuyển đổi văn bản thành tiếng nói.
+     *
+     * @param lang ngôn ngữ (2 ký tự (ví dụ: 'en'))
+     * @param text văn bản cần chuyển đổi thành tiếng nói
      */
     public void speak(String lang, String text) {
         try {
-            String apiUrl = String.format(TEXT_TO_SPEECH_API_URL, lang,
-                    URLEncoder.encode(text, StandardCharsets.UTF_8));
-            URL url = new URL(apiUrl);
-            HttpURLConnection con = (HttpURLConnection) url.openConnection();
-            InputStream audio = con.getInputStream();
-            new Player(audio).play();
-            con.disconnect();
+            String apiUrl = buildTextToSpeechUrl(lang, text);
+            playAudio(apiUrl);
         } catch (Exception e) {
-            e.printStackTrace();
-            System.err.println("Error in getting voices");
+            handleSpeechError(e);
         }
+    }
+
+    /**
+     * Xây dựng URL của API chuyển đổi văn bản thành tiếng nói.
+     *
+     * @param lang ngôn ngữ (2 ký tự (ví dụ: 'en'))
+     * @param text văn bản cần chuyển đổi thành tiếng nói
+     * @return URL đã xây dựng
+     * @throws UnsupportedEncodingException nếu encoding không được hỗ trợ
+     */
+    private String buildTextToSpeechUrl(String lang, String text) throws UnsupportedEncodingException {
+        return String.format(Config.TEXT_TO_SPEECH_API_URL, lang, URLEncoder.encode(text, StandardCharsets.UTF_8));
+    }
+
+    /**
+     * Phát âm thanh từ URL đã cho.
+     *
+     * @param apiUrl URL của tệp âm thanh
+     * @throws IOException nếu có lỗi trong quá trình yêu cầu HTTP
+     */
+    private void playAudio(String apiUrl) throws IOException {
+        URL url = new URL(apiUrl);
+        HttpURLConnection con = (HttpURLConnection) url.openConnection();
+        InputStream audio = con.getInputStream();
+
+        try {
+            new Player(audio).play();
+        } catch (JavaLayerException e) {
+            e.printStackTrace();
+        }
+
+        con.disconnect();
+    }
+
+    /**
+     * Xử lý lỗi trong quá trình chuyển đổi văn bản thành tiếng nói.
+     *
+     * @param e ngoại lệ được ném ra
+     */
+    private void handleSpeechError(Exception e) {
+        e.printStackTrace();
+        System.err.println("Lỗi khi lấy giọng đọc");
     }
 }

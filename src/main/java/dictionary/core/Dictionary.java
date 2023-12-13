@@ -7,96 +7,109 @@ import java.io.OutputStreamWriter;
 import java.io.Writer;
 import java.nio.charset.StandardCharsets;
 import java.sql.SQLException;
-import java.util.ArrayList;
+import java.util.List;
 
 public abstract class Dictionary {
 
     /**
-     * Initialize the dictionary when starting the application. (Only overridden by
-     * DatabaseDictionary for making MYSQL connection)
+     * Khởi tạo từ điển khi bắt đầu ứng dụng.
      */
     public void initialize() throws SQLException {
     }
 
     /**
-     * Close the dictionary when exiting the application. (Only overridden by
-     * DatabaseDictionary for
-     * close the MYSQL connection)
+     * Đóng từ điển khi thoát ứng dụng.
      */
     public void close() {
     }
 
     /**
-     * Get all words in the dictionary.
+     * Lấy tất cả các từ trong từ điển.
      *
-     * @return ArrayList of Word
+     * @return Danh sách từ
      */
-    public abstract ArrayList<Word> getAllWords();
+    public abstract List<Word> getAllWords();
 
     /**
-     * Get all English words in the dictionary into an ArrayList of String.
+     * Lấy tất cả các từ tiếng Anh trong từ điển thành danh sách các chuỗi.
      *
-     * @return ArrayList of String of all words
+     * @return Danh sách chuỗi của tất cả các từ
      */
-    public abstract ArrayList<String> getAllWordTargets();
+    public abstract List<String> getAllWordTargets();
 
     /**
-     * Lookup the word `target` and return the corresponding definition.
+     * Tra cứu từ `target` và trả về định nghĩa tương ứng.
      *
-     * @param target the lookup word
-     * @return the definition, if not found "404" is returned as a String.
+     * @param target từ tra cứu
+     * @return định nghĩa, nếu không tìm thấy thì trả về "404" dưới dạng chuỗi.
      */
     public abstract String lookUpWord(final String target);
 
     /**
-     * Insert a new word to dictionary.
+     * Chèn một từ mới vào từ điển.
      *
-     * @param target     the word
-     * @param definition the definition
-     * @return true if `target` hasn't been added yet, false otherwise
+     * @param target     từ
+     * @param definition định nghĩa
+     * @return true nếu `target` chưa được thêm, ngược lại là false
      */
     public abstract boolean insertWord(final String target, final String definition);
 
     /**
-     * Delete the word `target`.
+     * Xóa từ `target`.
      *
-     * @param target the deleted word
-     * @return true if successfully delete, false otherwise
+     * @param target từ đã xóa
+     * @return true nếu xóa thành công, ngược lại là false
      */
     public abstract boolean deleteWord(final String target);
 
     /**
-     * Update the Vietnamese definition of `target` to `definition`.
+     * Cập nhật định nghĩa tiếng Việt của `target` thành `definition`.
      *
-     * @param target     the word
-     * @param definition the new definition
-     * @return true if successfully updated, false otherwise
+     * @param target     từ
+     * @param definition định nghĩa mới
+     * @return true nếu cập nhật thành công, ngược lại là false
      */
     public abstract boolean updateWordDefinition(final String target, final String definition);
 
     /**
-     * Export all words with every word and definition is on 1 line separated by a
-     * tab character.
+     * Lấy định nghĩa của từ có ID là `iD`.
+     * 
+     * @param iD ID của từ
+     * @return định nghĩa của từ
+     */
+    public abstract String lookUpWordByIDGetDefinition(int iD);
+
+    /**
+     * Lấy từ có ID là `iD`.
+     * 
+     * @param iD ID của từ
+     * @return từ
+     */
+    public abstract String lookUpWordByIDGetTarget(int iD);
+
+    /**
+     * Xuất tất cả các từ với mỗi từ và định nghĩa trên 1 dòng, được phân tách bằng
+     * ký tự tab.
      *
-     * @return a string of exported words
+     * @return một chuỗi các từ đã xuất
      */
     public String exportAllWords() {
-        ArrayList<Word> allWords = getAllWords();
+        List<Word> allWords = getAllWords();
         StringBuilder result = new StringBuilder();
         for (Word word : allWords) {
-            result.append(word.getWordTarget())
+            result.append(word.getName())
                     .append('\t')
-                    .append(word.getWordDefinition())
+                    .append(word.getDefinition())
                     .append('\n');
         }
         return result.toString();
     }
 
     /**
-     * Export all words and their definitions to the file `exportPath`.
+     * Xuất tất cả các từ và định nghĩa của chúng vào tệp `exportPath`.
      *
-     * @param exportPath the path of the exported file
-     * @throws IOException path not found
+     * @param exportPath đường dẫn của tệp xuất
+     * @throws IOException đường dẫn không tìm thấy
      */
     public void exportToFile(String exportPath) throws IOException {
         Writer out = new BufferedWriter(

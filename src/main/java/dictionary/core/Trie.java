@@ -5,7 +5,7 @@ import java.util.Map;
 import java.util.TreeMap;
 
 /**
- * Design pattern: Singleton
+ * Design partern: Singleton
  */
 public class Trie {
 
@@ -14,13 +14,22 @@ public class Trie {
     private final ArrayList<String> searchedWords = new ArrayList<>();
     private final TrieNode root = new TrieNode();
 
+    public static class TrieNode {
+        Map<Character, TrieNode> children = new TreeMap<>();
+        boolean isEndOfWord;
+
+        TrieNode() {
+            isEndOfWord = false;
+        }
+    }
+
     private Trie() {
     }
 
     /**
-     * Get the instance of Trie DS.
+     * Lấy đối tượng của Trie DS.
      *
-     * @return the instance of Trie DS
+     * @return đối tượng của Trie DS
      */
     public static Trie getInstance() {
         if (instance == null) {
@@ -34,107 +43,87 @@ public class Trie {
     }
 
     /**
-     * Insert word `target` into Trie DS.
+     * Chèn từ `target` vào Trie DS.
      *
-     * @param target the word to insert
+     * @param target từ để chèn
      */
     public void insert(String target) {
-        int length = target.length();
+        TrieNode lastNode = traverseAndInsert(target);
+        if (lastNode != null) {
+            lastNode.isEndOfWord = true;
+        }
+    }
 
+    private TrieNode traverseAndInsert(String target) {
+        int length = target.length();
         TrieNode pCrawl = root;
 
         for (int level = 0; level < length; level++) {
             char index = target.charAt(level);
-
-            if (pCrawl.children.get(index) == null) {
-                pCrawl.children.put(index, new TrieNode());
-            }
-
-            pCrawl = pCrawl.children.get(index);
+            pCrawl = pCrawl.children.computeIfAbsent(index, k -> new TrieNode());
         }
 
-        // Set `target` word ends at pCrawl
-        pCrawl.isEndOfWord = true;
+        return pCrawl;
     }
 
     /**
-     * Get all words ended in the subtree of node `pCrawl`
+     * Tìm kiếm tất cả các từ bắt đầu bằng `prefix` trong Trie.
      *
-     * @param pCrawl the current node
-     * @param target the current word that `pCrawl` represents
-     */
-    private void dfsGetWordsSubtree(TrieNode pCrawl, String target) {
-        if (pCrawl.isEndOfWord) {
-            searchedWords.add(target);
-        }
-        for (char index : pCrawl.children.keySet()) {
-            if (pCrawl.children.get(index) != null) {
-                dfsGetWordsSubtree(pCrawl.children.get(index), target + index);
-            }
-        }
-    }
-
-    /**
-     * Search all words start with `prefix` in the Trie.
-     *
-     * @param prefix the prefix to search
-     * @return an ArrayList of String contains the words start with `prefix`
+     * @param prefix tiền tố cần tìm kiếm
+     * @return ArrayList chứa các từ bắt đầu bằng `prefix`
      */
     public ArrayList<String> search(String prefix) {
         if (prefix.isEmpty()) {
             return new ArrayList<>();
         }
+
         searchedWords.clear();
+        TrieNode lastNode = traverse(prefix);
+
+        if (lastNode != null) {
+            dfsGetWordsSubtree(lastNode, prefix);
+        }
+
+        return getSearchedWords();
+    }
+
+    private TrieNode traverse(String prefix) {
         int length = prefix.length();
         TrieNode pCrawl = root;
 
         for (int level = 0; level < length; level++) {
             char index = prefix.charAt(level);
-
-            if (pCrawl.children.get(index) == null) {
-                return getSearchedWords();
-            }
-
             pCrawl = pCrawl.children.get(index);
+
+            if (pCrawl == null) {
+                return null;
+            }
         }
-        dfsGetWordsSubtree(pCrawl, prefix);
-        return getSearchedWords();
+
+        return pCrawl;
     }
 
     /**
-     * Delete the word `target` from Trie DS.
+     * Xóa từ `target` khỏi Trie DS.
      *
-     * @param target the word to delete
+     * @param target từ cần xóa
      */
     public void delete(String target) {
-        int length = target.length();
+        TrieNode lastNode = traverse(target);
 
-        TrieNode pCrawl = root;
-
-        for (int level = 0; level < length; level++) {
-            char index = target.charAt(level);
-            if (pCrawl.children.get(index) == null) {
-                System.out.println("This word has not been inserted");
-                return;
-            }
-            pCrawl = pCrawl.children.get(index);
+        if (lastNode != null && lastNode.isEndOfWord) {
+            lastNode.isEndOfWord = false;
+        } else {
+            System.out.println("Từ này chưa được chèn vào Trie");
         }
-        if (!pCrawl.isEndOfWord) {
-            System.out.println("This word has not been inserted");
-            return;
-        }
-
-        pCrawl.isEndOfWord = false;
     }
 
-    /** a Node on the Trie DS. */
-    public static class TrieNode {
-        Map<Character, TrieNode> children = new TreeMap<>();
-        /* isEndOfWord is true if the node represents the end of a word */
-        boolean isEndOfWord;
-
-        TrieNode() {
-            isEndOfWord = false;
+    private void dfsGetWordsSubtree(TrieNode pCrawl, String target) {
+        if (pCrawl.isEndOfWord) {
+            searchedWords.add(target);
+        }
+        for (char index : pCrawl.children.keySet()) {
+            dfsGetWordsSubtree(pCrawl.children.get(index), target + index);
         }
     }
 }

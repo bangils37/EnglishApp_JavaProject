@@ -27,7 +27,7 @@ import com.googlecode.lanterna.screen.TerminalScreen;
 import com.googlecode.lanterna.terminal.DefaultTerminalFactory;
 import com.googlecode.lanterna.terminal.Terminal;
 
-import dictionary.core.DatabaseDictionary;
+import dictionary.core.SQLDictionary;
 import dictionary.core.Dictionary;
 import dictionary.core.Trie;
 import dictionary.util.StringUtil;
@@ -55,7 +55,7 @@ public class TerminalApp {
      * Initialize the dictionary.
      */
     private static void initializeDictionary() {
-        dictionary = new DatabaseDictionary();
+        dictionary = new SQLDictionary();
         try {
             dictionary.initialize();
         } catch (SQLException e) {
