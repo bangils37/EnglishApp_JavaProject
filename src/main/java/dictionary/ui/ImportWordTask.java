@@ -1,6 +1,7 @@
 package dictionary.ui;
 
 import dictionary.App;
+import dictionary.core.Trie;
 import dictionary.ui.controller.Application;
 import dictionary.util.StringUtil;
 
@@ -57,6 +58,7 @@ public class ImportWordTask extends Task<Void> {
             }
             processInputLine(inputLine);
             counter++;
+            System.out.println(counter);
             if (counter % 5 == 0) {
                 updateProgress(counter, numWords);
             }
@@ -64,7 +66,7 @@ public class ImportWordTask extends Task<Void> {
     }
 
     private void processInputLine(String inputLine) {
-        int pos = inputLine.indexOf("\t");
+        int pos = inputLine.indexOf(":");
         if (pos != -1) {
             String target = inputLine.substring(0, pos).strip();
             String definition = inputLine.substring(pos + 1).strip();
@@ -74,6 +76,7 @@ public class ImportWordTask extends Task<Void> {
 
     private void tryInsertWord(String target, String definition) {
         if (App.dictionary.insertWord(target, definition)) {
+            Trie.getInstance().insert(target);
             System.out.println("Inserted: " + target);
             numWordsInserted++;
         }
@@ -96,7 +99,8 @@ public class ImportWordTask extends Task<Void> {
     }
 
     /**
-     * Hiển thị hộp thoại thông báo thành công khi công việc được thực hiện thành công.
+     * Hiển thị hộp thoại thông báo thành công khi công việc được thực hiện thành
+     * công.
      */
     @Override
     protected void succeeded() {
