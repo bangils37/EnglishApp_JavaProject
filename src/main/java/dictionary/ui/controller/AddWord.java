@@ -2,6 +2,7 @@ package dictionary.ui.controller;
 
 import static dictionary.App.dictionary;
 
+import dictionary.core.Trie;
 import dictionary.ui.HelperUI;
 import dictionary.ui.ImportWordService;
 import java.nio.charset.StandardCharsets;
@@ -23,11 +24,16 @@ import javafx.scene.web.HTMLEditor;
 import javafx.stage.Stage;
 
 public class AddWord {
-    @FXML private Button browseButton;
-    @FXML private HTMLEditor htmlEditor;
-    @FXML private TextField inputText;
-    @FXML private Label fileLabel;
-    @FXML private AnchorPane anchorPane;
+    @FXML
+    private Button browseButton;
+    @FXML
+    private HTMLEditor htmlEditor;
+    @FXML
+    private TextField inputText;
+    @FXML
+    private Label fileLabel;
+    @FXML
+    private AnchorPane anchorPane;
     private ImportWordService service;
 
     /** Focus on the `browseButton` when open the window. */
@@ -52,8 +58,11 @@ public class AddWord {
         String target = inputText.getText();
         byte[] pText = htmlEditor.getHtmlText().getBytes(StandardCharsets.ISO_8859_1);
         String definition = new String(pText, StandardCharsets.UTF_8);
-        definition = definition.replaceAll("<html dir=\"ltr\"><head></head><body contenteditable=\"true\">|</body></html>", "");
+        definition = definition
+                .replaceAll("<html dir=\"ltr\"><head></head><body contenteditable=\"true\">|</body></html>", "");
         if (dictionary.insertWord(target, definition)) {
+            Trie.getInstance().insert(target);
+            System.out.print(Trie.getInstance().search(target).size());
             showAlert("Thông báo", "Thêm từ `" + target + "` thành công!", AlertType.INFORMATION);
         } else {
             showAlert("Lỗi", "Thêm từ `" + target + "` không thành công!", AlertType.ERROR);
@@ -74,7 +83,8 @@ public class AddWord {
     }
 
     /**
-     * Nếu người dùng đóng cửa sổ trong khi đang nhập (chưa hoàn thành) thì công việc cũng sẽ bị hủy.
+     * Nếu người dùng đóng cửa sổ trong khi đang nhập (chưa hoàn thành) thì công
+     * việc cũng sẽ bị hủy.
      */
     public void closeWhileImporting() {
         if (service != null) {
@@ -83,7 +93,8 @@ public class AddWord {
     }
 
     /**
-     * Nhập từ từ file đã chọn vào từ điển. Tạo một nhiệm vụ nền để hiển thị thanh tiến trình của công việc.
+     * Nhập từ từ file đã chọn vào từ điển. Tạo một nhiệm vụ nền để hiển thị thanh
+     * tiến trình của công việc.
      */
     @FXML
     public void submitImport() {

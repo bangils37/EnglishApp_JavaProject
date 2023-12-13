@@ -10,6 +10,7 @@ import dictionary.translate.strategy.EnSpeakerStrategy;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
 
@@ -178,14 +179,14 @@ public class Application {
         searchList.getItems().clear();
         String target = inputText.getText();
         ArrayList<String> searchedWords = Trie.getInstance().search(target);
-        ArrayList<String> allHistory = History.getInstance().getHistorySearch();
+        List<String> allHistory = History.getInstance().getHistorySearch();
 
         populateSearchListWithHistory(allHistory, target);
         populateSearchListWithSearchedWords(searchedWords);
         configureSearchListCellFactory();
     }
 
-    private void populateSearchListWithHistory(ArrayList<String> allHistory, String target) {
+    private void populateSearchListWithHistory(List<String> allHistory, String target) {
         for (int i = allHistory.size() - 1; i >= 0; i--) {
             if (target.isEmpty() || allHistory.get(i).startsWith(target)) {
                 searchList.getItems().add("#" + allHistory.get(i));
@@ -337,8 +338,7 @@ public class Application {
     }
 
     @FXML
-    public void changeToGame(ActionEvent event)
-    {
+    public void changeToGame(ActionEvent event) {
         // Thành code chuyển scene game ở đây nhá
     }
 
@@ -360,7 +360,8 @@ public class Application {
         Parent root = FXMLLoader.load(getClass().getClassLoader().getResource("fxml/SentencesTranslating.fxml"));
         Stage appStage = (Stage) ((Node) event.getSource()).getScene().getWindow();
         Scene scene = new Scene(root);
-        String cssPath = Application.isLightMode() ? "/css/SentencesTranslating-light.css" : "/css/SentencesTranslating-dark.css";
+        String cssPath = Application.isLightMode() ? "/css/SentencesTranslating-light.css"
+                : "/css/SentencesTranslating-dark.css";
         scene.getStylesheets().add(Objects.requireNonNull(getClass().getResource(cssPath)).toExternalForm());
         appStage.setTitle("Sentences Translator");
         appStage.setScene(scene);
@@ -426,7 +427,8 @@ public class Application {
 
     private void openInformationPopup(ActionEvent event) throws IOException {
         Parent root = FXMLLoader.load(getClass().getClassLoader().getResource("fxml/InformationPopup.fxml"));
-        Stage infStage = createPopUpStage(root, (Stage) ((Node) event.getSource()).getScene().getWindow(), "Về ứng dụng");
+        Stage infStage = createPopUpStage(root, (Stage) ((Node) event.getSource()).getScene().getWindow(),
+                "Về ứng dụng");
         infStage.show();
     }
 
@@ -446,7 +448,8 @@ public class Application {
 
     private void openInstructionPopup(ActionEvent event) throws IOException {
         Parent root = FXMLLoader.load(getClass().getClassLoader().getResource("fxml/InstructionPopup.fxml"));
-        Stage insStage = createPopUpStage(root, (Stage) ((Node) event.getSource()).getScene().getWindow(), "Hướng dẫn sử dụng");
+        Stage insStage = createPopUpStage(root, (Stage) ((Node) event.getSource()).getScene().getWindow(),
+                "Hướng dẫn sử dụng");
         insStage.show();
     }
 
@@ -511,7 +514,8 @@ public class Application {
         if (lastLookUpWord.isEmpty()) {
             showAlert("Thông báo", "Chưa chọn từ để xóa!", AlertType.ERROR);
         } else {
-            if (showConfirmationAlert("Xóa từ", "Bạn có chắc chắn muốn xóa từ `" + lastLookUpWord + "` khỏi từ điển hay không?")) {
+            if (showConfirmationAlert("Xóa từ",
+                    "Bạn có chắc chắn muốn xóa từ `" + lastLookUpWord + "` khỏi từ điển hay không?")) {
                 performDeleteWord();
             }
         }
@@ -580,7 +584,8 @@ public class Application {
     private void setAlertCss(Alert alert) {
         if (!Application.isLightMode()) {
             DialogPane dialogPane = alert.getDialogPane();
-            dialogPane.getStylesheets().add(Objects.requireNonNull(getClass().getResource("/css/Alert-dark.css")).toExternalForm());
+            dialogPane.getStylesheets()
+                    .add(Objects.requireNonNull(getClass().getResource("/css/Alert-dark.css")).toExternalForm());
             dialogPane.getStyleClass().add("alert");
         }
     }

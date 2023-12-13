@@ -1,21 +1,12 @@
 package dictionary.core;
 
-import java.io.BufferedReader;
 import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.IOException;
-import java.io.InputStreamReader;
-import java.nio.charset.StandardCharsets;
-import java.util.ArrayList;
+import java.util.List;
 
 import dictionary.util.FileUtil;
 
 public class History {
-    private static final int MAX_WORDS_HISTORY = 30;
-    private static final String HISTORY_DIRECTORY_PATH = "dictionary-user-data/";
-    private static final String HISTORY_FILE_PATH = HISTORY_DIRECTORY_PATH + "words-search-history.txt";
-    private final ArrayList<String> historySearch = new ArrayList<>();
+    private List<String> historySearch = null;
 
     private static History instance = null;
 
@@ -30,53 +21,35 @@ public class History {
         return instance;
     }
 
-    public ArrayList<String> getHistorySearch() {
+    public List<String> getHistorySearch() {
         return historySearch;
     }
 
     /**
-     * Load search history into `historySearch` ArrayList.
-     * 
-     * @see #historySearch
+     * Tải lịch sử tìm kiếm vào danh sách `historySearch`.
      */
     public void loadHistory() {
-        File directory = new File(HISTORY_DIRECTORY_PATH);
+        File directory = new File(Config.HISTORY_DIRECTORY_PATH);
         FileUtil.createDirectoryIfNotExists(directory);
 
-        File historyFile = new File(HISTORY_FILE_PATH);
+        File historyFile = new File(Config.HISTORY_FILE_PATH);
         FileUtil.createFileIfNotExists(historyFile);
 
-        loadHistoryFromFile(HISTORY_FILE_PATH);
+        loadHistoryFromFile(Config.HISTORY_FILE_PATH);
         refactorHistory();
     }
 
     /**
-     * Load search history from saved file.
-     * 
-     * @param filePath path to the file
+     * Tải lịch sử tìm kiếm từ tệp đã lưu.
      */
     private void loadHistoryFromFile(String filePath) {
-        try (BufferedReader reader = new BufferedReader(
-                new InputStreamReader(
-                        new FileInputStream(filePath),
-                        StandardCharsets.UTF_8))) {
-            String line;
-            while ((line = reader.readLine()) != null) {
-                historySearch.add(line.strip());
-            }
-        } catch (FileNotFoundException e) {
-            e.printStackTrace();
-            System.out.println("File not found: " + filePath);
-        } catch (IOException e) {
-            e.printStackTrace();
-            System.out.println("Failed to read file: " + filePath);
-        }
+        historySearch = FileUtil.loadLinesFromFile(filePath);
     }
 
     /**
-     * Add a word to the search History.getInstance().
+     * Thêm một từ vào lịch sử tìm kiếm History.
      * 
-     * @param target the word to be added
+     * @param target từ cần thêm
      */
     public void addWordToHistory(String target) {
         historySearch.removeIf(e -> e.equals(target));
@@ -85,7 +58,7 @@ public class History {
     }
 
     /**
-     * Export serach history to saved file.
+     * Xuất lịch sử tìm kiếm ra tệp đã lưu.
      */
     public void exportHistory() {
         StringBuilder content = new StringBuilder();
@@ -94,15 +67,15 @@ public class History {
             content.append(target).append("\n");
         }
 
-        FileUtil.writeToFile(HISTORY_FILE_PATH, content.toString());
+        FileUtil.writeToFile(Config.HISTORY_FILE_PATH, content.toString());
     }
 
     /**
-     * Refactor search history to limit the number of words.
+     * Tái cấu trúc lịch sử tìm kiếm để giới hạn số lượng từ.
      */
     private void refactorHistory() {
-        if (historySearch.size() > MAX_WORDS_HISTORY) {
-            historySearch.subList(0, historySearch.size() - MAX_WORDS_HISTORY).clear();
+        if (historySearch.size() > Config.MAX_WORDS_HISTORY) {
+            historySearch.subList(0, historySearch.size() - Config.MAX_WORDS_HISTORY).clear();
         }
     }
 }

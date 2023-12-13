@@ -3,7 +3,6 @@ package dictionary.util;
 import java.io.BufferedReader;
 import java.io.FileReader;
 import java.io.IOException;
-import java.nio.CharBuffer;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
@@ -45,7 +44,8 @@ public class StringUtil {
     /**
      * Chuyển đổi HTML sang văn bản thuần túy giữ nguyên các dòng, đoạn văn...
      *
-     * <p>Tham chiếu:
+     * <p>
+     * Tham chiếu:
      * https://stackoverflow.com/questions/2513707/how-to-convert-html-to-text-keeping-linebreaks
      *
      * @param html Chuỗi HTML
@@ -61,7 +61,8 @@ public class StringUtil {
     /**
      * Xây dựng văn bản thuần túy từ các nút của Jsoup.
      *
-     * <p>Tham chiếu: <a
+     * <p>
+     * Tham chiếu: <a
      * href=
      * "https://stackoverflow.com/questions/2513707/how-to-convert-html-to-text-keeping-linebreaks">...</a>
      *
