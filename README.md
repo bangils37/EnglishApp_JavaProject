@@ -63,3 +63,5 @@ in `src/main/java/dictionary/server/DatabaseDictionary.java`.
   mvn clean javafx:run
   ```
 
+![cay cau truc](https://github.com/bangils37/EnglishApp_JavaProject/assets/124591525/3c1a5edc-7add-4197-af54-f2a79c0b6d1b)
+![cay cau truc 2](https://github.com/bangils37/EnglishApp_JavaProject/assets/124591525/cd638959-96fb-4985-846b-18186094bb14)
