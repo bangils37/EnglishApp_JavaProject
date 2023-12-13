@@ -137,9 +137,9 @@
       </font>
    </Button>
    <Button fx:id="game_iconButton" layoutX="1111.0" layoutY="300.0" mnemonicParsing="false" prefHeight="51.0" prefWidth="51.0" />
-   <ImageView fitHeight="33.0" fitWidth="33.0" layoutX="1121.0" layoutY="309.0" pickOnBounds="true" preserveRatio="true">
+   <ImageView fitHeight="43.0" fitWidth="51.0" layoutX="1115.0" layoutY="304.0" pickOnBounds="true" preserveRatio="true">
       <image>
-         <Image url="@../icon/Icons/google-icon.png" />
+         <Image url="@../icon/Icons/game-icon.png" />
       </image>
    </ImageView>
 </AnchorPane>
