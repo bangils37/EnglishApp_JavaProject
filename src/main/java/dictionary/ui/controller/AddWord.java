@@ -120,6 +120,7 @@ public class AddWord {
         ProgressBar pBar = createProgressBar();
         anchorPane.getChildren().addAll(veil, pBar);
         service.start();
+        System.out.println(filePath);
     }
 
     @FXML
@@ -130,7 +131,8 @@ public class AddWord {
     private void setAlertCss(Alert alert) {
         if (!Application.isLightMode()) {
             DialogPane dialogPane = alert.getDialogPane();
-            dialogPane.getStylesheets().add(Objects.requireNonNull(getClass().getResource("/css/Alert-dark.css")).toExternalForm());
+            dialogPane.getStylesheets()
+                    .add(Objects.requireNonNull(getClass().getResource("/css/Alert-dark.css")).toExternalForm());
             dialogPane.getStyleClass().add("alert");
         }
     }
