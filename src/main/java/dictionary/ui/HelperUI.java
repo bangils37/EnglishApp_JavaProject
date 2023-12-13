@@ -15,20 +15,22 @@ public class HelperUI {
      * Mở cửa sổ chọn file để chọn một tập tin.
      *
      * @param stage sân khấu để mở FileChooser từ
-     * @return đường dẫn của tập tin đã chọn, hoặc chuỗi rỗng nếu không chọn tập tin nào
+     * @return đường dẫn của tập tin đã chọn, hoặc chuỗi rỗng nếu không chọn tập tin
+     *         nào
      */
     public static String chooseFile(Stage stage) {
-        return chooseFileOrDir(stage, true);
+        return chooseFileOrDir(stage, false);
     }
 
     /**
      * Mở cửa sổ chọn thư mục để chọn một thư mục.
      *
      * @param stage sân khấu để mở DirectoryChooser từ
-     * @return đường dẫn của thư mục đã chọn, hoặc chuỗi rỗng nếu không chọn thư mục nào
+     * @return đường dẫn của thư mục đã chọn, hoặc chuỗi rỗng nếu không chọn thư mục
+     *         nào
      */
     public static String chooseDir(Stage stage) {
-        return chooseFileOrDir(stage, false);
+        return chooseFileOrDir(stage, true);
     }
 
     /**
@@ -36,7 +38,8 @@ public class HelperUI {
      *
      * @param stage     sân khấu để mở FileChooser hoặc DirectoryChooser từ
      * @param chooseDir true nếu chọn thư mục, false nếu chọn file
-     * @return đường dẫn của file hoặc thư mục đã chọn, hoặc chuỗi rỗng nếu không chọn gì
+     * @return đường dẫn của file hoặc thư mục đã chọn, hoặc chuỗi rỗng nếu không
+     *         chọn gì
      */
     private static String chooseFileOrDir(Stage stage, boolean chooseDir) {
         File chosenFile = chooseDir ? showDirectoryDialog(stage) : showFileOpenDialog(stage);
