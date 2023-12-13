@@ -97,10 +97,7 @@ public abstract class Dictionary {
         List<Word> allWords = getAllWords();
         StringBuilder result = new StringBuilder();
         for (Word word : allWords) {
-            result.append(word.getName())
-                    .append('\t')
-                    .append(word.getDefinition())
-                    .append('\n');
+            appendWordAndDefinition(result, word);
         }
         return result.toString();
     }
@@ -119,4 +116,19 @@ public abstract class Dictionary {
         out.write(export);
         out.close();
     }
+
+    /**
+     * Thêm từ và định nghĩa vào StringBuilder với mỗi từ và định nghĩa trên 1 dòng,
+     * được phân tách bằng ký tự tab.
+     *
+     * @param stringBuilder StringBuilder để thêm vào
+     * @param word           từ để thêm
+     */
+    private void appendWordAndDefinition(StringBuilder stringBuilder, Word word) {
+        stringBuilder.append(word.getName())
+                .append('\t')
+                .append(word.getDefinition())
+                .append('\n');
+    }
+
 }

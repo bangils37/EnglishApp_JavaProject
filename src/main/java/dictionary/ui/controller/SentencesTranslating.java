@@ -24,23 +24,33 @@ import javafx.stage.Modality;
 import javafx.stage.Stage;
 
 public class SentencesTranslating {
-    @FXML private TextArea sourceText;
-    @FXML private TextArea sinkText;
+    @FXML
+    private TextArea sourceText;
+    @FXML
+    private TextArea sinkText;
     private boolean enToVi = true;
-    @FXML private Label upButton;
-    @FXML private Label downButton;
-    @FXML private Button translateButton;
-    @FXML private Button helpButton;
-    @FXML private Button dictionaryButton;
-    @FXML private Button voiceButton;
-    @FXML private Button alterButton;
+    @FXML
+    private Label upButton;
+    @FXML
+    private Label downButton;
+    @FXML
+    private Button translateButton;
+    @FXML
+    private Button helpButton;
+    @FXML
+    private Button dictionaryButton;
+    @FXML
+    private Button voiceButton;
+    @FXML
+    private Button alterButton;
 
     private TranslationStrategy viToEnStrategy = new ViToEnTranslationStrategy();
     private TranslationStrategy enToViStrategy = new EnToViTranslationStrategy();
     private SpeakerStrategy viSpeakerStrategy = new ViSpeakerStrategy();
     private SpeakerStrategy enSpeakerStrategy = new EnSpeakerStrategy();
 
-    public SentencesTranslating() {}
+    public SentencesTranslating() {
+    }
 
     @FXML
     private void initialize() {
@@ -49,8 +59,7 @@ public class SentencesTranslating {
 
     /**
      * Chuẩn bị biểu tượng cho tất cả các nút dựa trên `mode` được chỉ định (dark mode là
-     * 0 và light mode
-     * là 1).
+     * 0 và light mode là 1).
      *
      * @param mode biểu tượng light mode hoặc dark mode
      */
@@ -63,10 +72,10 @@ public class SentencesTranslating {
     /**
      * Đặt biểu tượng cho một nút.
      *
-     * @param button     nút để đặt biểu tượng
-     * @param iconName   tên của tệp biểu tượng
-     * @param fitHeight  chiều cao để vừa với biểu tượng
-     * @param fitWidth   chiều rộng để vừa với biểu tượng
+     * @param button    nút để đặt biểu tượng
+     * @param iconName  tên của tệp biểu tượng
+     * @param fitHeight chiều cao để vừa với biểu tượng
+     * @param fitWidth  chiều rộng để vừa với biểu tượng
      */
     private void setButtonIcon(Button button, String iconName, double fitHeight, double fitWidth) {
         ImageView icon = new ImageView(new Image("/icon/" + iconName));
@@ -77,15 +86,12 @@ public class SentencesTranslating {
 
     /**
      * Dịch văn bản từ tiếng Anh sang tiếng Việt (hoặc ngược lại, tùy thuộc vào trạng thái
-     * hiện tại `enToVi`)
-     * và đưa ra nội dung vào sinkText.
+     * hiện tại `enToVi`) và đưa ra nội dung vào sinkText.
      */
     @FXML
     public void translateEnToVi() {
         String source = sourceText.getText();
-        sinkText.setText(
-                (enToVi ? enToViStrategy : viToEnStrategy)
-                        .translate(source));
+        sinkText.setText((enToVi ? enToViStrategy : viToEnStrategy).translate(source));
     }
 
     /**
@@ -110,8 +116,7 @@ public class SentencesTranslating {
 
     /**
      * Phát âm thanh TTS của văn bản nguồn (từ tiếng Anh sang tiếng Việt hoặc ngược lại tùy thuộc vào
-     * trạng thái hiện tại
-     * `enToVi`).
+     * trạng thái hiện tại `enToVi`).
      */
     @FXML
     public void textToSpeech() {
@@ -136,25 +141,8 @@ public class SentencesTranslating {
      */
     private void loadMainApplicationScene(ActionEvent event) {
         try {
-            Parent root = FXMLLoader.load(
-                    Objects.requireNonNull(
-                            getClass()
-                                    .getClassLoader()
-                                    .getResource("fxml/Application.fxml")));
-            Stage appStage = (Stage) ((Node) event.getSource()).getScene().getWindow();
-            Scene scene = new Scene(root);
-            scene.getStylesheets()
-                    .add(
-                            Objects.requireNonNull(
-                                            getClass()
-                                                    .getResource(
-                                                            (Application.isLightMode()
-                                                                    ? "/css/Application-light.css"
-                                                                    : "/css/Application-dark.css")))
-                                    .toExternalForm());
-            appStage.setTitle("Dictionary");
-            appStage.setScene(scene);
-            appStage.show();
+            Parent root = loadFXML("fxml/Application.fxml");
+            setSceneAndShow(event, root, "Dictionary", "/css/Application-light.css", "/css/Application-dark.css");
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -165,28 +153,12 @@ public class SentencesTranslating {
      */
     private void showInstructionPopup() {
         try {
-            Parent root = FXMLLoader.load(
-                    Objects.requireNonNull(
-                            getClass()
-                                    .getClassLoader()
-                                    .getResource(
-                                            "fxml/SentencesTranslatingInstructionPopup.fxml")));
+            Parent root = loadFXML("fxml/SentencesTranslatingInstructionPopup.fxml");
             Stage senInsStage = new Stage();
             Stage appStage = (Stage) translateButton.getScene().getWindow();
             senInsStage.initOwner(appStage);
             Scene scene = new Scene(root);
-            if (!Application.isLightMode()) {
-                scene.getStylesheets()
-                        .add(
-                                Objects.requireNonNull(
-                                                getClass().getResource("/css/General-dark.css"))
-                                        .toExternalForm());
-            }
-            senInsStage.setTitle("Hướng dẫn sử dụng");
-            senInsStage.setResizable(false);
-            senInsStage.setScene(scene);
-            senInsStage.initModality(Modality.APPLICATION_MODAL);
-            senInsStage.show();
+            setSceneAndShowPopup(senInsStage, scene, "Hướng dẫn sử dụng", "/css/General-dark.css");
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -197,11 +169,65 @@ public class SentencesTranslating {
      */
     private void updateLanguageLabels() {
         if (enToVi) {
-            upButton.setText("English");
-            downButton.setText("Vietnamese");
+            setLabelsText("English", "Vietnamese");
         } else {
-            upButton.setText("Vietnamese");
-            downButton.setText("English");
+            setLabelsText("Vietnamese", "English");
         }
+    }
+
+    /**
+     * Set text for language labels.
+     *
+     * @param upLabelText   text for up label
+     * @param downLabelText text for down label
+     */
+    private void setLabelsText(String upLabelText, String downLabelText) {
+        upButton.setText(upLabelText);
+        downButton.setText(downLabelText);
+    }
+
+    /**
+     * Load FXML file and return its root.
+     *
+     * @param fxmlFileName name of the FXML file
+     * @return root of the loaded FXML file
+     * @throws IOException if an I/O error occurs during loading
+     */
+    private Parent loadFXML(String fxmlFileName) throws IOException {
+        return FXMLLoader.load(getClass().getClassLoader().getResource(fxmlFileName));
+    }
+
+    /**
+     * Set scene for the given stage and show it.
+     *
+     * @param event    action event
+     * @param root     root of the scene
+     * @param title    title of the stage
+     * @param lightCSS light mode CSS file
+     * @param darkCSS  dark mode CSS file
+     */
+    private void setSceneAndShow(ActionEvent event, Parent root, String title, String lightCSS, String darkCSS) {
+        Stage appStage = (Stage) ((Node) event.getSource()).getScene().getWindow();
+        Scene scene = new Scene(root);
+        scene.getStylesheets().add(Application.isLightMode() ? lightCSS : darkCSS);
+        appStage.setTitle(title);
+        appStage.setScene(scene);
+        appStage.show();
+    }
+
+    /**
+     * Set scene for the given stage, show it as a modal popup and make it non-resizable.
+     *
+     * @param stage   the stage to be shown
+     * @param scene   the scene to be set
+     * @param title   title of the stage
+     * @param darkCSS dark mode CSS file
+     */
+    private void setSceneAndShowPopup(Stage stage, Scene scene, String title, String darkCSS) {
+        stage.setScene(scene);
+        stage.setTitle(title);
+        stage.setResizable(false);
+        stage.initModality(Modality.APPLICATION_MODAL);
+        stage.show();
     }
 }
