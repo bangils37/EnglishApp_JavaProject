@@ -4,8 +4,10 @@ import static dictionary.App.dictionary;
 
 import dictionary.core.Trie;
 import dictionary.ui.HelperUI;
-import dictionary.ui.ImportWordService;
+import dictionary.ui.WordImporterTask;
 import javafx.application.Platform;
+import javafx.concurrent.Service;
+import javafx.concurrent.Task;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.Node;
@@ -15,7 +17,6 @@ import javafx.scene.layout.Region;
 import javafx.scene.web.HTMLEditor;
 import javafx.stage.Stage;
 
-import java.nio.charset.StandardCharsets;
 import java.util.Objects;
 
 public class AddWord {
@@ -34,7 +35,7 @@ public class AddWord {
     @FXML
     private AnchorPane anchorPane;
 
-    private ImportWordService service;
+    private Service<Void> service;
 
     @FXML
     private void initialize() {
@@ -115,7 +116,13 @@ public class AddWord {
     }
 
     private void startImportService(String filePath) {
-        service = new ImportWordService(filePath);
+        service = new Service<Void>() {
+            @Override
+            protected Task<Void> createTask() {
+                return new WordImporterTask(filePath);
+            }
+        };
+
         Region veil = createVeil();
         ProgressBar pBar = createProgressBar();
         anchorPane.getChildren().addAll(veil, pBar);

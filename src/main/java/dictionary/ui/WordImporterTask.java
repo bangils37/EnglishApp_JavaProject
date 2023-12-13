@@ -17,12 +17,12 @@ import javafx.scene.control.Alert;
 import javafx.scene.control.DialogPane;
 import javafx.scene.control.Alert.AlertType;
 
-public class ImportWordTask extends Task<Void> {
+public class WordImporterTask extends Task<Void> {
     private final String file;
     private int numWordsInserted = 0;
     private int numWords;
 
-    public ImportWordTask(String file) {
+    public WordImporterTask(String file) {
         this.file = file;
     }
 
@@ -143,7 +143,8 @@ public class ImportWordTask extends Task<Void> {
         setAlertCss(alert);
         alert.setTitle(title);
         String content = prefix + numInserted + "/" + total + " từ vào từ điển.\nCó "
-                + (total - numInserted) + " từ không được thêm vào từ điển\n(bị gián đoạn, lỗi format hoặc từ đã tồn tại).";
+                + (total - numInserted)
+                + " từ không được thêm vào từ điển\n(bị gián đoạn, lỗi format hoặc từ đã tồn tại).";
         alert.setContentText(content);
         return alert;
     }
@@ -151,7 +152,8 @@ public class ImportWordTask extends Task<Void> {
     private void setAlertCss(Alert alert) {
         if (!Application.isLightMode()) {
             DialogPane dialogPane = alert.getDialogPane();
-            dialogPane.getStylesheets().add(Objects.requireNonNull(getClass().getResource("/css/Alert-dark.css")).toExternalForm());
+            dialogPane.getStylesheets()
+                    .add(Objects.requireNonNull(getClass().getResource("/css/Alert-dark.css")).toExternalForm());
             dialogPane.getStyleClass().add("alert");
         }
     }
