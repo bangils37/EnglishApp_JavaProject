@@ -41,11 +41,10 @@ public class ExportToFile {
 
     @FXML
     public void submitExport() {
-        String file = getFileName();
-        String dirPath = getDirectoryPath();
-        if (isInputValid(dirPath, file)) {
-            exportToFile(dirPath, file);
-        }
+        String file = "export.txt";
+        String dirPath = getFileName();
+
+        exportToFile(dirPath, file);
     }
 
     private String getDirectoryFromUser(ActionEvent event) {
@@ -71,7 +70,7 @@ public class ExportToFile {
 
     private void exportToFile(String dirPath, String file) {
         try {
-            String filePath = dirPath + "\\" + file;
+            String filePath = dirPath + file;
             dictionary.exportToFile(filePath);
             showAlert("Thông báo", "Thành công xuất dữ liệu ra file `" + filePath + "`", Alert.AlertType.INFORMATION);
         } catch (IOException e) {
@@ -91,7 +90,8 @@ public class ExportToFile {
     private void setAlertCss(Alert alert) {
         if (!Application.isLightMode()) {
             DialogPane dialogPane = alert.getDialogPane();
-            dialogPane.getStylesheets().add(Objects.requireNonNull(getClass().getResource("/css/Alert-dark.css")).toExternalForm());
+            dialogPane.getStylesheets()
+                    .add(Objects.requireNonNull(getClass().getResource("/css/Alert-dark.css")).toExternalForm());
             dialogPane.getStyleClass().add("alert");
         }
     }
