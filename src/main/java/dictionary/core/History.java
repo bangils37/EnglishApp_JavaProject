@@ -39,6 +39,10 @@ public class History {
         refactorHistory();
     }
 
+    public void removeWordFromHistory(String target) {
+        historySearch.removeIf(e -> e.equals(target));
+    }
+
     /**
      * Tải lịch sử tìm kiếm từ tệp đã lưu.
      */

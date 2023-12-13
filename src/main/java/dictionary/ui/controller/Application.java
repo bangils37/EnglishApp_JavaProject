@@ -234,12 +234,15 @@ public class Application {
     @FXML
     public void lookUpWord() {
         String target = inputText.getText();
+        System.out.println(target);
         if (target.startsWith("#")) {
             target = target.substring(1);
         }
         if (!target.isEmpty()) {
             History.getInstance().addWordToHistory(target);
         }
+
+        lastLookUpWord = target;
 
         String definition = dictionary.lookUpWord(target);
         handleDefinitionResult(definition);
@@ -542,6 +545,8 @@ public class Application {
 
     private void performDeleteWord() {
         if (dictionary.deleteWord(lastLookUpWord)) {
+            Trie.getInstance().delete(lastLookUpWord);
+            History.getInstance().removeWordFromHistory(lastLookUpWord);
             showAlert("Thông báo", "Xóa từ `" + lastLookUpWord + "` thành công!", AlertType.INFORMATION);
         } else {
             showAlert("Lỗi", "Không tồn tại từ `" + lastLookUpWord + "` trong từ điển để xóa!", AlertType.ERROR);
