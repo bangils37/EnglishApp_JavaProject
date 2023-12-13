@@ -53,22 +53,6 @@ public class Application {
     private int lastIndex = 0;
     private Image historyIcon;
     @FXML
-    private Button addWordButton;
-    @FXML
-    private Button showInformationButton;
-    @FXML
-    private Button showInstructionButton;
-    @FXML
-    private Button exportButton;
-    @FXML
-    private Button pronounceButton;
-    @FXML
-    private Button editButton;
-    @FXML
-    private Button deleteButton;
-    @FXML
-    private Button googleButton;
-    @FXML
     private Button modeToggle;
 
     private SpeakerStrategy speakerStrategy;
@@ -86,8 +70,7 @@ public class Application {
     }
 
     /**
-     * Focus on the inputText TextField when first open. Prepare the search list
-     * after that.
+     * Tập trung vào ô nhập văn bản `inputText` khi mở ứng dụng. Chuẩn bị danh sách tìm kiếm sau đó.
      */
     @FXML
     private void initialize() {
@@ -98,13 +81,17 @@ public class Application {
         prepareSearchList();
     }
 
+    /**
+     * Xử lý sự kiện khi nút chuyển đổi chế độ sáng/tối được nhấn. Thực hiện việc chuyển đổi chế độ,
+     * cập nhật kiểu trang, và chuẩn bị lại các yếu tố giao diện người dùng.
+     */
     @FXML
     public void toggleModeButton() {
         toggleMode();
         updateSceneStylesheet();
         inputText.requestFocus();
-        prepareHistoryIcon(!isLightMode());
-        prepareButtonIcon(!isLightMode());
+        prepareHistoryIcon(isLightMode());
+        prepareButtonIcon(isLightMode());
         if (!lastLookUpWord.isEmpty()) {
             lookUpWord();
         } else {
@@ -113,12 +100,18 @@ public class Application {
         prepareSearchList();
     }
 
+    /**
+     * Cập nhật kiểu trang cho WebView để thể hiện chế độ sáng hoặc tối.
+     */
     private void updateSceneStylesheet() {
         modeToggle.getScene().getStylesheets().clear();
         modeToggle.getScene().getStylesheets().add(
                 isLightMode() ? "/css/Application-light.css" : "/css/Application-dark.css");
     }
 
+    /**
+     * Cập nhật nội dung WebView với màu nền và màu chữ tương ứng với chế độ sáng hoặc tối.
+     */
     private void updateWebViewContent() {
         String backgroundColor = isLightMode() ? "#D2F6F7" : "#1D3C69";
         String textColor = isLightMode() ? "#000000" : "#babccf";
@@ -128,25 +121,26 @@ public class Application {
                 "text/html");
     }
 
+    /**
+     * Chuẩn bị WebView để hiển thị nội dung.
+     */
     public void prepareWebView() {
         updateWebViewContent();
     }
 
     /**
-     * Prepare the icons of all the buttons based on the given `mode` (dark mode is
-     * 0 and light mode
-     * is 1).
+     * Chuẩn bị biểu tượng cho tất cả các nút dựa trên chế độ đã cho (`mode`), trong đó chế độ tối là 0 và chế độ sáng là 1.
      *
-     * @param mode light mode or dark mode icons
+     * @param mode biểu tượng chế độ sáng hoặc tối
      */
     public void prepareButtonIcon(boolean mode) {
+        // Cài đặt biểu tượng cho các nút dựa trên chế độ được chuyển vào
     }
 
     /**
-     * Move to the search list by pressing DOWN arrow key when at the `inputText`
-     * TextField.
+     * Di chuyển đến danh sách tìm kiếm bằng cách nhấn phím mũi tên XUỐNG khi đang ở ô `inputText` TextField.
      *
-     * @param event action event
+     * @param event sự kiện hành động
      */
     @FXML
     public void changeFocusDown(KeyEvent event) {
@@ -158,7 +152,7 @@ public class Application {
         }
     }
 
-    /** Load the history icon into its corresponding icon image. */
+    /** Tải biểu tượng lịch sử vào hình biểu tượng tương ứng. */
     private void prepareHistoryIcon(boolean isLightMode) {
         String iconType = isLightMode ? "light" : "dark";
         try {
@@ -171,9 +165,8 @@ public class Application {
     }
 
     /**
-     * Prepare the search lists having the text in `inputText` as prefix. Words in
-     * the history base
-     * appears first in the list, and they begin with a "history" icon.
+     * Chuẩn bị danh sách tìm kiếm có chứa văn bản trong `inputText` làm tiền tố. Các từ trong cơ sở lịch sử
+     * xuất hiện trước trong danh sách và bắt đầu bằng một biểu tượng "history".
      */
     public void prepareSearchList() {
         searchList.getItems().clear();
